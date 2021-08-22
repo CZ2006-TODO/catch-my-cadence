@@ -1,3 +1,7 @@
+// Auth SDK is hosted on MavenCentral, but spotify_sdk requires it to be included manually.
+// If not you will get a build error.
+include ':spotify-auth'
+include ':spotify-app-remote' // For Spotify SDK.
 include ':app'
 
 def localPropertiesFile = new File(rootProject.projectDir, "local.properties")

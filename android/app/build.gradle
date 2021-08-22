@@ -55,5 +55,7 @@ flutter {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/com.spotify.android/auth/1.2.5
+    // implementation 'com.spotify.android:auth:1.2.5' // For Spotify SDK
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
