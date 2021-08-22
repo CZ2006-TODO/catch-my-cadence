@@ -5,5 +5,7 @@ build
 .flutter-plugins
 .flutter-plugins-dependencies
 
-/.vscode
-/.idea
+.vscode
+.idea
+
+secrets.env
