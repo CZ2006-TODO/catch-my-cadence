@@ -2,7 +2,7 @@
     package="com.todo.catch_my_cadence">
    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
    <application
-        android:label="catch_my_cadence"
+        android:label="Catch My Cadence"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
