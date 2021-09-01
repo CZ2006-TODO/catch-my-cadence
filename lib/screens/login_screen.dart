@@ -9,6 +9,12 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
+const List<String> scopes = [
+  "app-remote-control",
+  "user-modify-playback-state",
+  "user-read-currently-playing"
+];
+
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
@@ -22,7 +28,8 @@ class LoginScreen extends StatelessWidget {
           onPressed: () async {
             try {
               var token = await SpotifySdk.getAuthenticationToken(
-                  clientId: clientID, redirectUrl: redirectURI);
+                  clientId: clientID, redirectUrl: redirectURI,
+                  scope: scopes.join(", "));
               // Save token into file.
               final appDirectory = await getApplicationDocumentsDirectory();
               File tokenFile = File("${appDirectory.path}/usrToken");
