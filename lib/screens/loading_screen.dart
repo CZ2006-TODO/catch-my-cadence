@@ -59,8 +59,9 @@ class LoadingScreenState extends State<LoadingScreen> {
       // Successfully got a token.
       // Navigate to the main screen.
       log("Successfully loaded stored auth token!");
-      Navigator.of(context)
-          .pushReplacementNamed(MAIN_SCREEN_ROUTE, arguments: token);
+      Navigator.of(context).pushReplacementNamed(
+          RouteDelegator.MAIN_SCREEN_ROUTE,
+          arguments: token);
     }, onError: (e) {
       // If future returns an error, rethrow it.
       throw e;
@@ -68,7 +69,8 @@ class LoadingScreenState extends State<LoadingScreen> {
       // If the result is an error, that means the user needs to login again.
       // Navigate to the login screen.
       log("Error while attempting to get stored auth token: ${e.toString()}");
-      Navigator.of(context).pushReplacementNamed(LOGIN_SCREEN_ROUTE);
+      Navigator.of(context)
+          .pushReplacementNamed(RouteDelegator.LOGIN_SCREEN_ROUTE);
     });
   }
 

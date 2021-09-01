@@ -28,15 +28,17 @@ class LoginScreen extends StatelessWidget {
           onPressed: () async {
             try {
               var token = await SpotifySdk.getAuthenticationToken(
-                  clientId: clientID, redirectUrl: redirectURI,
+                  clientId: clientID,
+                  redirectUrl: redirectURI,
                   scope: scopes.join(", "));
               // Save token into file.
               final appDirectory = await getApplicationDocumentsDirectory();
               File tokenFile = File("${appDirectory.path}/usrToken");
               tokenFile.writeAsString(token);
               // Navigate to main screen after successfully getting auth token.
-              Navigator.of(ctx)
-                  .pushReplacementNamed(MAIN_SCREEN_ROUTE, arguments: token);
+              Navigator.of(ctx).pushReplacementNamed(
+                  RouteDelegator.MAIN_SCREEN_ROUTE,
+                  arguments: token);
             } on PlatformException catch (e) {
               log("PlatformException on getting auth token:\n${e.toString()}");
               showDialog(

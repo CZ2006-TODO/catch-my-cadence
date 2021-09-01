@@ -9,7 +9,7 @@ void main() {
   runApp(MaterialApp(
     title: "Catch My Cadence",
     // App always shows the loading screen when open.
-    initialRoute: LOADING_SCREEN_ROUTE,
+    initialRoute: RouteDelegator.LOADING_SCREEN_ROUTE,
     onGenerateRoute: RouteDelegator.delegateRoute,
   ));
 }
