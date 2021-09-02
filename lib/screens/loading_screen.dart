@@ -45,7 +45,7 @@ class LoadingScreenState extends State<LoadingScreen> {
   }
 
   // asyncLoad : Asynchronously load up the application.
-  // This application contains logic for routing the user to the appropriate
+  // This function contains logic for routing the user to the appropriate
   // screen after loading.
   Future<void> asyncLoad() async {
     // First attempt to load environment secrets.
