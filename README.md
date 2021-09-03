@@ -1,16 +1,33 @@
-# catch_my_cadence
+# Catch My Cadence
 
-An application that plays songs with a BPM similar to your walking/running cadence.
+An application that plays songs with a BPM matching your walking/running cadence.
 
 ## Getting Started
+Minimal steps to run this application.
+1. Clone the repo (or pull it).
+2. Run the following commands:
 
-This project is a starting point for a Flutter application.
+```cmd
+$ flutter pub get
+```
 
-A few resources to get you started if this is your first Flutter project:
+3. Set up your `/assets/secrets.env` file. You may look at the example `.env` file provided for more
+information.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Implementation Details
+The following have been implemented so far:
+1. Login Flow
+2. Navigator to help navigate between pages (look at `routes.dart` for more details)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## TODO list
+Some of the things and thoughts I had while implementing the above:
+1. Might be a good idea to add a Config class (to store all the minor config details). Currently,
+they are quite scattered around. Some examples:
+    - `usrToken`, which is the name of the file that stores the auth token, 
+    is implemented as a string that appears more than once in multiple files (magic string???)
+    - User scopes is a global list that appears in `login_screen.dart`.
+2. I have not handled exceptions for `connectToSpotifyRemote` in `main_screen.dart`.
+3. I had `login_screen.dart` handle the authentication, but not the connection to Spotify
+(`connectToSpotifyRemote`), since it is not technically an authentication. Instead, I implemented it such that
+`main_screen.dart` does the connection and throws an exception there if it fails, which I feel makes more sense.
+Just wanted some thoughts on this.
