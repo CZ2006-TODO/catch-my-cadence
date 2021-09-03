@@ -26,8 +26,4 @@ they are quite scattered around. Some examples:
     - `usrToken`, which is the name of the file that stores the auth token, 
     is implemented as a string that appears more than once in multiple files (magic string???)
     - User scopes is a global list that appears in `login_screen.dart`.
-2. I have not handled exceptions for `connectToSpotifyRemote` in `main_screen.dart`.
-3. I had `login_screen.dart` handle the authentication, but not the connection to Spotify
-(`connectToSpotifyRemote`), since it is not technically an authentication. Instead, I implemented it such that
-`main_screen.dart` does the connection and throws an exception there if it fails, which I feel makes more sense.
-Just wanted some thoughts on this.
+2. The login flow is different for different devices (look through `loading_screen.dart` for info).
