@@ -40,12 +40,12 @@ class LoadingScreenState extends State<LoadingScreen> {
     final appDirectory = await getApplicationDocumentsDirectory();
     File tokenFile = File("${appDirectory.path}/usrToken");
 
-    // Try to read the file.
     try {
+      // Try to read the file.
       log("Attempting to get stored auth token from ${tokenFile.path}");
       return await tokenFile.readAsString();
     } catch (e) {
-      // If error getting auth tokens.
+      // If error getting auth token, return an empty string.
       return "";
     }
   }
@@ -61,6 +61,9 @@ class LoadingScreenState extends State<LoadingScreen> {
       // Attempt to login.
       log("Attempting to connect to Spotify...");
 
+      // Login flow may be different for different device type.
+      // For iOS, call to connectToSpotifyRemote should require a token
+      // to avoid opening the Spotify app unnecessarily.
       if (Platform.isIOS) {
         // Try to load stored auth token.
         var token = await getStoredAuthToken();
@@ -91,7 +94,7 @@ class LoadingScreenState extends State<LoadingScreen> {
           barrierDismissible: false,
         );
       } else {
-        log("User has not logged in before: ${e.toString()}");
+        log("iOS Specific: No auth token found: ${e.toString()}");
         // We bring user to the login screen.
         Navigator.of(context)
             .pushReplacementNamed(RouteDelegator.LOGIN_SCREEN_ROUTE);

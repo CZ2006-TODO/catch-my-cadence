@@ -1,6 +1,4 @@
-import 'package:catch_my_cadence/main.dart';
 import 'package:flutter/material.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 class MainScreen extends StatelessWidget {
   MainScreen({Key? key}) : super(key: key);
