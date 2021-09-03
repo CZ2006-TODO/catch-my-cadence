@@ -21,6 +21,9 @@ class LoginScreen extends StatelessWidget {
           child: Text("Login to Spotify"),
           onPressed: () async {
             try {
+              // At this point, the app should have checked (in the loading screen)
+              // and verified that the user should have a Spotify app installed,
+              // so this call should always open the Spotify app.
               var token = await SpotifySdk.getAuthenticationToken(
                   clientId: clientId, redirectUrl: redirectUrl);
 
