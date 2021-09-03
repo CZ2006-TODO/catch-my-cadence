@@ -28,12 +28,21 @@ class MainScreenState extends State<MainScreen> {
       log(res ? "Connection successful" : "Connection failed!");
     } on PlatformException catch (e) {
       log("PlatformException: ${e.toString()}");
-      showDialog(
-        context: context,
-        builder: (_) => FatalErrorDialog(
-            "It seems you do not have the Spotify App installed!"),
-        barrierDismissible: false,
-      );
+      if (e.toString().contains("CouldNotFindSpotifyApp")) {
+        showDialog(
+          context: context,
+          builder: (_) => FatalErrorDialog(
+              message: "It seems you do not have the Spotify App installed!"),
+          barrierDismissible: false,
+        );
+      } else {
+        showDialog(
+            context: context,
+            builder: (_) => FatalErrorDialog(
+                title: "Whoopsie!",
+                message:
+                    "You may have logged out of your Spotify App recently.\n\nPlease check and come back!"));
+      }
     }
   }
 

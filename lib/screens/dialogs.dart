@@ -17,8 +17,8 @@ class ErrorDialog extends AlertDialog {
 // FatalErrorDialog: Shows an AlertDialog with an error message,
 // that has a single option to close the app entirely.
 class FatalErrorDialog extends AlertDialog {
-  FatalErrorDialog(String message)
-      : super(title: Text("App gonna crash!"), content: Text(message), actions: [
+  FatalErrorDialog({String title = "App gonna crash!", required String message})
+      : super(title: Text(title), content: Text(message), actions: [
     TextButton(
       child: Text("Close App"),
       onPressed: () {
