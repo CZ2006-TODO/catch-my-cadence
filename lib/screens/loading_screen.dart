@@ -80,8 +80,8 @@ class LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-      appBar: AppBar(title: Text("Loading Screen")),
-      body: Center(child: Text("Loading...")),
+      backgroundColor: Colors.white,
+      body: Center(child: Image.asset("assets/images/splash_screen.png")),
     );
   }
 }

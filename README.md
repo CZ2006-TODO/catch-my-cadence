@@ -17,13 +17,12 @@ information.
 ## Implementation Details
 The following have been implemented so far:
 1. Login Flow
+   - `loading_screen.dart` checks if the user has logged in before.
+   - `login_screen.dart` does authentication.
+   - `main_screen.dart` does connection to Spotify App.
 2. Navigator to help navigate between pages (look at `routes.dart` for more details)
+3. Splash screen (kinda)
 
 ## TODO list
 Some of the things and thoughts I had while implementing the above:
-1. Might be a good idea to add a Config class (to store all the minor config details). Currently,
-they are quite scattered around. Some examples:
-    - `usrToken`, which is the name of the file that stores the auth token, 
-    is implemented as a string that appears more than once in multiple files (magic string???)
-    - User scopes is a global list that appears in `login_screen.dart`.
-2. The login flow is different for different devices (look through `loading_screen.dart` for info).
+1. Everything has been addressed! (so far)

@@ -1,8 +1,8 @@
-// Config stores the general global variables
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+// Config stores the general global variables
 class Config {
   // Private
   static const String _tokenFileName = "usrToken";
