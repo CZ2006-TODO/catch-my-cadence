@@ -1,8 +1,8 @@
 import 'package:catch_my_cadence/routes.dart';
 import 'package:flutter/material.dart';
 
-late String clientID;
-late String redirectURI;
+late String clientId;
+late String redirectUrl;
 
 // App starts running from the main activity.
 void main() {

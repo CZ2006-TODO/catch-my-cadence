@@ -16,13 +16,9 @@ class RouteDelegator {
       case LOADING_SCREEN_ROUTE: // Loading screen
         return MaterialPageRoute(builder: (ctx) => LoadingScreen());
       case MAIN_SCREEN_ROUTE: // Main screen
-        if (args is String) {
-          return MaterialPageRoute(builder: (ctx) => MainScreen(token: args));
-        }
-        continue error;
+        return MaterialPageRoute(builder: (ctx) => MainScreen());
       case LOGIN_SCREEN_ROUTE: // Login screen
         return MaterialPageRoute(builder: (ctx) => LoginScreen());
-      error:
       default: // Unexpected error screen
         return MaterialPageRoute(
             builder: (ctx) => Scaffold(body: Center(child: Text("Error!"))));

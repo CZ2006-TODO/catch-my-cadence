@@ -9,12 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
-const List<String> scopes = [
-  "app-remote-control",
-  "user-modify-playback-state",
-  "user-read-currently-playing"
-];
-
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
@@ -28,28 +22,26 @@ class LoginScreen extends StatelessWidget {
           onPressed: () async {
             try {
               var token = await SpotifySdk.getAuthenticationToken(
-                  clientId: clientID,
-                  redirectUrl: redirectURI,
-                  scope: scopes.join(", "));
+                  clientId: clientId, redirectUrl: redirectUrl);
+
               // Save token into file.
               final appDirectory = await getApplicationDocumentsDirectory();
               File tokenFile = File("${appDirectory.path}/usrToken");
               tokenFile.writeAsString(token);
+
               // Navigate to main screen after successfully getting auth token.
               Navigator.of(ctx).pushReplacementNamed(
                   RouteDelegator.MAIN_SCREEN_ROUTE,
-                  arguments: token);
+                  arguments: "token");
             } on PlatformException catch (e) {
-              log("PlatformException on getting auth token:\n${e.toString()}");
+              log("PlatformException:\n${e.toString()}");
               showDialog(
-                  context: ctx,
-                  builder: (c) => ErrorDialog(
-                      c,
-                      "It seems that we have some trouble "
-                      "authenticating you right now. Try again later!"),
-                  barrierDismissible: false);
+                context: ctx,
+                builder: (c) => ErrorDialog(c, "Error logging in to Spotify!"),
+                barrierDismissible: false,
+              );
             } on MissingPluginException catch (e) {
-              log("MissingPluginException on getting auth token:\n${e.toString()}");
+              log("MissingPluginException:\n${e.toString()}");
               showDialog(
                   context: ctx,
                   builder: (c) => ErrorDialog(

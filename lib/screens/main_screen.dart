@@ -3,14 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 class MainScreen extends StatelessWidget {
-  final String token;
-
-  MainScreen({Key? key, required this.token}) : super(key: key) {
-    // Connect to Spotify app.
-    // TODO: Handle PlatformException if fail to connect to Spotify app.
-    SpotifySdk.connectToSpotifyRemote(
-        clientId: clientID, redirectUrl: redirectURI, accessToken: token);
-  }
+  MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext ctx) {
