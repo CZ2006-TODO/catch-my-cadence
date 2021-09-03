@@ -1,16 +1,40 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:catch_my_cadence/main.dart';
+import 'package:catch_my_cadence/config.dart';
 import 'package:catch_my_cadence/routes.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
+
+  // authenticateWithSpotify : Calls the SpotifySdk.getAuthenticationToken
+  // function to get an auth token from Spotify. It will then save it into a
+  // designated file.
+  Future<void> authenticateWithSpotify(BuildContext ctx) async {
+    try {
+      // Open the Spotify App or a fallback WebView to authenticate user.
+      var token = await SpotifySdk.getAuthenticationToken(
+          clientId: Config.clientId, redirectUrl: Config.redirectUrl);
+
+      // Save token into file.
+      File tokenFile = await Config.tokenFilePath;
+      tokenFile.writeAsString(token);
+
+      // Navigate to main screen after successfully getting auth token.
+      Navigator.of(ctx).pushReplacementNamed(RouteDelegator.MAIN_SCREEN_ROUTE,
+          arguments: token);
+    } on Exception catch (e) {
+      log("Exception: ${e.toString()}");
+      showDialog(
+        context: ctx,
+        builder: (c) => ErrorDialog(c, "Error logging in to Spotify!"),
+        barrierDismissible: false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext ctx) {
@@ -20,39 +44,7 @@ class LoginScreen extends StatelessWidget {
             child: TextButton(
           child: Text("Login to Spotify"),
           onPressed: () async {
-            try {
-              // At this point, the app should have checked (in the loading screen)
-              // and verified that the user should have a Spotify app installed,
-              // so this call should always open the Spotify app.
-              var token = await SpotifySdk.getAuthenticationToken(
-                  clientId: clientId, redirectUrl: redirectUrl);
-
-              // Save token into file.
-              final appDirectory = await getApplicationDocumentsDirectory();
-              File tokenFile = File("${appDirectory.path}/usrToken");
-              tokenFile.writeAsString(token);
-
-              // Navigate to main screen after successfully getting auth token.
-              Navigator.of(ctx).pushReplacementNamed(
-                  RouteDelegator.MAIN_SCREEN_ROUTE,
-                  arguments: "token");
-            } on PlatformException catch (e) {
-              log("PlatformException:\n${e.toString()}");
-              showDialog(
-                context: ctx,
-                builder: (c) => ErrorDialog(c, "Error logging in to Spotify!"),
-                barrierDismissible: false,
-              );
-            } on MissingPluginException catch (e) {
-              log("MissingPluginException:\n${e.toString()}");
-              showDialog(
-                  context: ctx,
-                  builder: (c) => ErrorDialog(
-                      c,
-                      "Your platform is missing required SDKs for this app."
-                      "Sorry!\n\n"),
-                  barrierDismissible: false);
-            }
+            authenticateWithSpotify(ctx);
           },
         )));
   }

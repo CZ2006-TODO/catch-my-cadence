@@ -1,14 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:catch_my_cadence/main.dart';
+import 'package:catch_my_cadence/config.dart';
 import 'package:catch_my_cadence/routes.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 // LoadingScreen shows the loading screen when the user first starts the app.
 // This screen contains the logic of checking the user authentication,
@@ -25,87 +22,52 @@ class LoadingScreenState extends State<LoadingScreen> {
   // with this application.
   Future<void> loadSecrets() async {
     await dotenv.load(fileName: "assets/secrets.env");
-    clientId = dotenv.get("CLIENT_ID", fallback: "read_client_id_err");
-    redirectUrl = dotenv.get("REDIRECT_URI", fallback: "read_redirect_uri_err");
+    Config.clientId = dotenv.get("CLIENT_ID", fallback: "read_client_id_err");
+    Config.redirectUrl =
+        dotenv.get("REDIRECT_URI", fallback: "read_redirect_uri_err");
     log("""Loaded Secrets:
-    CLIENT_ID: $clientId
-    REDIRECT_URI: $redirectUrl""");
+    CLIENT_ID: ${Config.clientId}
+    REDIRECT_URI: ${Config.redirectUrl}""");
   }
 
   // getStoredAuthToken : Attempts to get a saved authentication token to
-  // connect with Spotify. If the function fails to get an authentication token,
-  // it will return an empty string.
+  // connect with Spotify. If there is no stored token, a FileSystemException is thrown.
   Future<String> getStoredAuthToken() async {
-    // Find the file containing the saved token.
-    final appDirectory = await getApplicationDocumentsDirectory();
-    File tokenFile = File("${appDirectory.path}/usrToken");
-
-    try {
-      // Try to read the file.
-      log("Attempting to get stored auth token from ${tokenFile.path}");
-      return await tokenFile.readAsString();
-    } catch (e) {
-      // If error getting auth token, return an empty string.
-      return "";
-    }
+    // Try to read the file.
+    File tokenFile = await Config.tokenFilePath;
+    log("Attempting to get stored auth token from ${tokenFile.path}");
+    return await tokenFile.readAsString();
   }
 
   // asyncLoad : Asynchronously load up the application.
   // This function contains logic for routing the user to the appropriate
   // screen after loading.
   Future<void> asyncLoad() async {
-    // First attempt to load environment secrets.
+    // Load environment secrets.
     await loadSecrets();
 
     try {
       // Attempt to login.
-      log("Attempting to connect to Spotify...");
+      log("Attempting to authenticate with Spotify...");
 
-      // Login flow may be different for different device type.
-      // For iOS, call to connectToSpotifyRemote should require a token
-      // to avoid opening the Spotify app unnecessarily.
-      if (Platform.isIOS) {
-        // Try to load stored auth token.
-        var token = await getStoredAuthToken();
-        // If we get back empty string, then no stored token.
-        if (token.isEmpty) {
-          throw PlatformException(code: "NotLoggedInException");
-        }
-        await SpotifySdk.connectToSpotifyRemote(
-            clientId: clientId, redirectUrl: redirectUrl, accessToken: token);
-      } else if (Platform.isAndroid) {
-        await SpotifySdk.connectToSpotifyRemote(
-            clientId: clientId, redirectUrl: redirectUrl);
-      } else {
-        throw MissingPluginException;
-      }
-
+      // Get stored auth token.
+      // If no stored token, FileSystemException thrown.
+      var token = await getStoredAuthToken();
+      log("Authentication successful! Bringing user to main screen.");
+      // Then navigate to the main screen together with the saved token.
+      Navigator.of(context).pushReplacementNamed(
+          RouteDelegator.MAIN_SCREEN_ROUTE,
+          arguments: token);
+    } on FileSystemException {
+      log("No stored token found! Prompting user to login.");
       Navigator.of(context)
-          .pushReplacementNamed(RouteDelegator.MAIN_SCREEN_ROUTE);
-    } on PlatformException catch (e) {
-      // There are 2 possibilities.
-      // 1. Spotify App not installed.         Ex: CouldNotFindSpotifyApp.
-      // 2. User not logged in to Spotify app. Ex: NotLoggedInException.
-      if (e.toString().contains("CouldNotFindSpotifyApp")) {
-        log("No Spotify App found: ${e.toString()}");
-        showDialog(
-          context: context,
-          builder: (_) => FatalErrorDialog("Spotify App not installed!"),
-          barrierDismissible: false,
-        );
-      } else {
-        log("iOS Specific: No auth token found: ${e.toString()}");
-        // We bring user to the login screen.
-        Navigator.of(context)
-            .pushReplacementNamed(RouteDelegator.LOGIN_SCREEN_ROUTE);
-      }
-    } on MissingPluginException {
-      log("Platform not supported due to missing plugins.");
+          .pushReplacementNamed(RouteDelegator.LOGIN_SCREEN_ROUTE);
+    } on Exception catch (e) {
+      // Platform is not supported.
+      log("Exception: ${e.toString()}");
       showDialog(
-        context: context,
-        builder: (_) => FatalErrorDialog("This platform is not supported"),
-        barrierDismissible: false,
-      );
+          context: context,
+          builder: (c) => ErrorDialog(c, "General Exception: ${e.toString()}"));
     }
   }
 

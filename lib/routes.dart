@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 // RouteDelegator helps to navigate the different screens of the app.
 class RouteDelegator {
   static const String LOADING_SCREEN_ROUTE = '/';
-  static const String MAIN_SCREEN_ROUTE    = '/main';
-  static const String LOGIN_SCREEN_ROUTE   = '/login';
+  static const String MAIN_SCREEN_ROUTE = '/main';
+  static const String LOGIN_SCREEN_ROUTE = '/login';
 
   static Route<dynamic> delegateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -16,9 +16,15 @@ class RouteDelegator {
       case LOADING_SCREEN_ROUTE: // Loading screen
         return MaterialPageRoute(builder: (ctx) => LoadingScreen());
       case MAIN_SCREEN_ROUTE: // Main screen
-        return MaterialPageRoute(builder: (ctx) => MainScreen());
+        var token = args;
+        if (token is String) {
+          return MaterialPageRoute(builder: (ctx) => MainScreen(token: token));
+        }
+        continue ErrorRoute;
       case LOGIN_SCREEN_ROUTE: // Login screen
         return MaterialPageRoute(builder: (ctx) => LoginScreen());
+
+      ErrorRoute:
       default: // Unexpected error screen
         return MaterialPageRoute(
             builder: (ctx) => Scaffold(body: Center(child: Text("Error!"))));
