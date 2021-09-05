@@ -1,9 +1,7 @@
-import 'package:catch_my_cadence/models/cadence_pedometer.dart';
 import 'package:catch_my_cadence/screens/loading_screen.dart';
 import 'package:catch_my_cadence/screens/login_screen.dart';
 import 'package:catch_my_cadence/screens/main_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 // RouteDelegator helps to navigate the different screens of the app.
 class RouteDelegator {
@@ -20,10 +18,7 @@ class RouteDelegator {
       case MAIN_SCREEN_ROUTE: // Main screen
         var token = args;
         if (token is String) {
-          return MaterialPageRoute(
-              builder: (ctx) => ChangeNotifierProvider(
-                  create: (_) => CadencePedometer(),
-                  child: MainScreen(token: token)));
+          return MaterialPageRoute(builder: (ctx) => MainScreen(token: token));
         }
         continue ErrorRoute;
       case LOGIN_SCREEN_ROUTE: // Login screen

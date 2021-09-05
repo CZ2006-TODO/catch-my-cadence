@@ -67,11 +67,14 @@ class MainScreenState extends State<MainScreen> {
         appBar: AppBar(
           title: Text("Main Screen"),
         ),
-        body: Center(child: Consumer<CadencePedometer>(
-          builder: (context, cp, child) {
-            return CadencePedometerWidget(cp.currStepCount);
-          },
-        )));
+        body: ChangeNotifierProvider(
+          create: (_) => CadencePedometerModel(),
+          child: Center(child: Consumer<CadencePedometerModel>(
+            builder: (context, cp, child) {
+              return CadencePedometerWidget(cp.currStepCount);
+            },
+          )),
+        ));
   }
 }
 

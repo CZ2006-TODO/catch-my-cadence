@@ -5,7 +5,7 @@ import 'package:pedometer/pedometer.dart';
 
 // CadencePedometer : Contains information regarding the current pedometer
 // reading as well as cadence reading.
-class CadencePedometer extends ChangeNotifier {
+class CadencePedometerModel extends ChangeNotifier {
   // Private
   late Stream<StepCount> _stepCount;
 
@@ -18,7 +18,7 @@ class CadencePedometer extends ChangeNotifier {
     notifyListeners();
   }
 
-  CadencePedometer() {
+  CadencePedometerModel() {
     _stepCount = Pedometer.stepCountStream;
     _stepCount.listen(onStepUpdate);
   }
