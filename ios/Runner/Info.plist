@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Catch My Cadence</string>
+	<string>catch_my_cadence</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -41,11 +41,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSMotionUsageDescription</key>
-    <string>This application tracks your steps</string>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>processing</string>
-    </array>
 </dict>
 </plist>
