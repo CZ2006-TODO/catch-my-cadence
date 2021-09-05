@@ -20,7 +20,10 @@ class MainScreenState extends State<MainScreen> {
   // and shows user an error if connection fails.
   Future<void> connectWithSpotify() async {
     try {
-      // Attempt to connect to Spotify
+      // Attempt to connect to Spotify.
+      // There are 2 possible exceptions that both throw PlatformException:
+      // 1. NotLoggedInException   : Thrown if user is not logged in on Spotify.
+      // 2. CouldNotFindSpotifyApp : Thrown if Spotify App not installed.
       var res = await SpotifySdk.connectToSpotifyRemote(
           clientId: Config.clientId,
           redirectUrl: Config.redirectUrl,
