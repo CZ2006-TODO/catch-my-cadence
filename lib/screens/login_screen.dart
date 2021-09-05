@@ -7,6 +7,9 @@ import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
+// LoginScreen is a screen that prompts the user to connect the app to the
+// Spotify app. This is done through directly opening the Spotify app, or
+// by opening a fallback WebView to log in.
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 

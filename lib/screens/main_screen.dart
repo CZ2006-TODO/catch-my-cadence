@@ -1,11 +1,16 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/config.dart';
+import 'package:catch_my_cadence/models/cadence_pedometer.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
+// MainScreen is the screen that the user will see after authentication
+// and connecting successfully with the Spotify app.
+// This screen also contains many other widgets such as the CadencePedometerWidget.
 class MainScreen extends StatefulWidget {
   final String token;
 
@@ -62,6 +67,26 @@ class MainScreenState extends State<MainScreen> {
         appBar: AppBar(
           title: Text("Main Screen"),
         ),
-        body: Center(child: Text("This is the main screen.")));
+        body: Center(
+            child: Consumer<CadencePedometer>(
+          builder: (context, cp, child) {
+            return CadencePedometerWidget(cp.currStepCount);
+          },
+        )));
+  }
+}
+
+// This part contains the other widgets that MainScreen makes use of.
+
+class CadencePedometerWidget extends StatelessWidget {
+  late final int steps;
+
+  CadencePedometerWidget(int steps) {
+    this.steps = steps;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text(steps.toString()));
   }
 }
