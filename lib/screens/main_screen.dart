@@ -71,14 +71,20 @@ class MainScreenState extends State<MainScreen> {
           create: (_) => CadencePedometerModel(),
           child: Center(child: Consumer<CadencePedometerModel>(
             builder: (context, cp, child) {
-              return CadencePedometerWidget(cp.currStepCount);
+              return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CadencePedometerWidget(cp.currStepCount),
+                  ]);
             },
           )),
         ));
   }
 }
 
-// This part contains the other widgets that MainScreen makes use of.
+/*
+* This part contains the other widgets that MainScreen makes use of.
+* */
 
 class CadencePedometerWidget extends StatelessWidget {
   late final int steps;
@@ -89,6 +95,6 @@ class CadencePedometerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text(steps.toString()));
+    return Text(steps.toString());
   }
 }
