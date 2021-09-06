@@ -17,15 +17,6 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class LoadingScreenState extends State<LoadingScreen> {
-  // getStoredAuthToken : Attempts to get a saved authentication token to
-  // connect with Spotify. If there is no stored token, a FileSystemException is thrown.
-  Future<String> getStoredAuthToken() async {
-    // Try to read the file.
-    File tokenFile = await Config.tokenFilePath;
-    log("Attempting to get stored auth token from ${tokenFile.path}");
-    return await tokenFile.readAsString();
-  }
-
   // asyncLoad : Asynchronously load up the application.
   // This function contains logic for routing the user to the appropriate
   // screen after loading.
@@ -39,7 +30,7 @@ class LoadingScreenState extends State<LoadingScreen> {
 
       // Get stored auth token.
       // If no stored token, FileSystemException thrown.
-      var token = await getStoredAuthToken();
+      var token = await Config.getStoredAuthToken();
       log("Authentication successful! Bringing user to main screen.");
       // Then navigate to the main screen together with the saved token.
       Navigator.of(context).pushReplacementNamed(

@@ -20,8 +20,28 @@ class Config {
 
   // Returns the path to the stored auth token file.
   static Future<File> get tokenFilePath async {
+    // This is different from the Project Directory.
+    // It refers to where the Platform OS keeps any persistent storage
+    // linked to this app on the platform!
     final appDirectory = await getApplicationDocumentsDirectory();
     return File("${appDirectory.path}/$_tokenFileName");
+  }
+
+  // getStoredAuthToken : Attempts to get a saved authentication token from
+  // persistent storage to connect with Spotify.
+  // If there is no stored token, a FileSystemException is thrown.
+  static Future<String> getStoredAuthToken() async {
+    // Try to read the file.
+    File tokenFile = await Config.tokenFilePath;
+    log("Attempting to get stored auth token from ${tokenFile.path}");
+    return await tokenFile.readAsString();
+  }
+
+  // storeAuthToken : Saves a provided authentication token into app persistent
+  // memory.
+  static Future<void> storeAuthToken(String token) async {
+    File tokenFile = await Config.tokenFilePath;
+    tokenFile.writeAsString(token);
   }
 
   // loadSecrets : Attempts to load the client ID and redirect URI associated

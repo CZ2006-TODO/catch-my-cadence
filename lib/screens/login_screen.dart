@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:catch_my_cadence/config.dart';
 import 'package:catch_my_cadence/routes.dart';
@@ -23,8 +22,7 @@ class LoginScreen extends StatelessWidget {
           clientId: Config.clientId, redirectUrl: Config.redirectUrl);
 
       // Save token into file.
-      File tokenFile = await Config.tokenFilePath;
-      tokenFile.writeAsString(token);
+      await Config.storeAuthToken(token);
 
       // Navigate to main screen after successfully getting auth token.
       Navigator.of(ctx).pushReplacementNamed(RouteDelegator.MAIN_SCREEN_ROUTE,
