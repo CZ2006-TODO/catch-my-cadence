@@ -6,12 +6,12 @@ import 'package:flutter/services.dart';
 class ErrorDialog extends AlertDialog {
   ErrorDialog(BuildContext context, String message)
       : super(title: Text("Oh no!"), content: Text(message), actions: [
-    TextButton(
-        child: Text("Alright!"),
-        onPressed: () {
-          Navigator.of(context).pop();
-        }),
-  ]);
+          TextButton(
+              child: Text("Alright!"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+        ]);
 }
 
 // FatalErrorDialog: Shows an AlertDialog with an error message,
@@ -19,11 +19,11 @@ class ErrorDialog extends AlertDialog {
 class FatalErrorDialog extends AlertDialog {
   FatalErrorDialog({String title = "App gonna crash!", required String message})
       : super(title: Text(title), content: Text(message), actions: [
-    TextButton(
-      child: Text("Close App"),
-      onPressed: () {
-        SystemChannels.platform.invokeMethod("SystemNavigator.pop");
-      },
-    )
-  ]);
+          TextButton(
+            child: Text("Close App"),
+            onPressed: () {
+              SystemChannels.platform.invokeMethod("SystemNavigator.pop");
+            },
+          )
+        ]);
 }
