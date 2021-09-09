@@ -12,9 +12,7 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 // and connecting successfully with the Spotify app.
 // This screen also contains many other widgets such as the CadencePedometerWidget.
 class MainScreen extends StatefulWidget {
-  final String token;
-
-  MainScreen({Key? key, required this.token}) : super(key: key);
+  MainScreen({Key? key}) : super(key: key);
 
   @override
   MainScreenState createState() => MainScreenState();
@@ -26,31 +24,24 @@ class MainScreenState extends State<MainScreen> {
   Future<void> connectWithSpotify() async {
     try {
       // Attempt to connect to Spotify.
-      // There are 2 possible exceptions that both throw PlatformException:
-      // 1. NotLoggedInException   : Thrown if user is not logged in on Spotify.
-      // 2. CouldNotFindSpotifyApp : Thrown if Spotify App not installed.
       var res = await SpotifySdk.connectToSpotifyRemote(
-          clientId: Config.clientId,
-          redirectUrl: Config.redirectUrl,
-          accessToken: widget.token);
+          clientId: Config.clientId, redirectUrl: Config.redirectUrl);
       log(res ? "Connection successful" : "Connection failed!");
     } on PlatformException catch (e) {
       log("PlatformException: ${e.toString()}");
-      if (e.toString().contains("CouldNotFindSpotifyApp")) {
-        showDialog(
+
+      // Check for the type of PlatformException.
+      // There are 2 possible exceptions that both throw PlatformException:
+      // 1. NotLoggedInException   : Thrown if user is not logged in on Spotify app.
+      // 2. CouldNotFindSpotifyApp : Thrown if Spotify App not installed.
+      String message = (e.toString().contains("CouldNotFindSpotifyApp"))
+          ? "It seems you do not have the Spotify App installed!"
+          : "You may have logged out of your Spotify App recently.\n\n"
+          "Please check and come back!";
+      showDialog(
           context: context,
-          builder: (_) => FatalErrorDialog(
-              message: "It seems you do not have the Spotify App installed!"),
-          barrierDismissible: false,
-        );
-      } else {
-        showDialog(
-            context: context,
-            builder: (_) => FatalErrorDialog(
-                title: "Whoopsie!",
-                message:
-                    "You may have logged out of your Spotify App recently.\n\nPlease check and come back!"));
-      }
+          builder: (_) => FatalErrorDialog(message: message),
+      );
     }
   }
 

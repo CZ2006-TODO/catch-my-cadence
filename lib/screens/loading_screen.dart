@@ -1,9 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:catch_my_cadence/config.dart';
 import 'package:catch_my_cadence/routes.dart';
-import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:flutter/material.dart';
 
 // LoadingScreen shows the loading screen when the user first starts the app.
@@ -21,32 +19,21 @@ class LoadingScreenState extends State<LoadingScreen> {
   // This function contains logic for routing the user to the appropriate
   // screen after loading.
   Future<void> asyncLoad() async {
+    // Artificially slow down the loading for user experience.
+    await Future.delayed(Duration(seconds: 1));
+
     // Load environment secrets.
     await Config.loadSecrets();
 
-    try {
-      // Attempt to login.
-      log("Attempting to authenticate with Spotify...");
+    log("Checking first run status...");
+    bool firstRun = await Config.getFirstRunFlag();
+    log("Status: $firstRun");
 
-      // Get stored auth token.
-      // If no stored token, FileSystemException thrown.
-      var token = await Config.getStoredAuthToken();
-      log("Authentication successful! Bringing user to main screen.");
-      // Then navigate to the main screen together with the saved token.
-      Navigator.of(context).pushReplacementNamed(
-          RouteDelegator.MAIN_SCREEN_ROUTE,
-          arguments: token);
-    } on FileSystemException {
-      log("No stored token found! Prompting user to login.");
-      Navigator.of(context)
-          .pushReplacementNamed(RouteDelegator.LOGIN_SCREEN_ROUTE);
-    } on Exception catch (e) {
-      // Platform is not supported.
-      log("Exception: ${e.toString()}");
-      showDialog(
-          context: context,
-          builder: (c) => ErrorDialog(c, "General Exception: ${e.toString()}"));
-    }
+    // Navigate to required screen based on flag.
+    // If flag is true, then should direct user to login screen
+    Navigator.of(context).pushReplacementNamed(firstRun
+        ? RouteDelegator.FIRST_RUN_SCREEN_ROUTE
+        : RouteDelegator.MAIN_SCREEN_ROUTE);
   }
 
   @override

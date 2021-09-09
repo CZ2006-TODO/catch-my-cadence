@@ -1,13 +1,12 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Config stores the general global variables
 class Config {
   // Private
-  static const String _tokenFileName = "usrToken";
+  static final String firstRunFlag = "first_run";
 
   // Public
   static String get clientId {
@@ -15,33 +14,20 @@ class Config {
   }
 
   static String get redirectUrl {
-    return dotenv.get("REDIRECT_URL", fallback: "read_redirect_url_err");
+    return dotenv.get("REDIRECT_URI", fallback: "read_redirect_uri_err");
   }
 
-  // Returns the path to the stored auth token file.
-  static Future<File> get tokenFilePath async {
-    // This is different from the Project Directory.
-    // It refers to where the Platform OS keeps any persistent storage
-    // linked to this app on the platform!
-    final appDirectory = await getApplicationDocumentsDirectory();
-    return File("${appDirectory.path}/$_tokenFileName");
+  // getFirstRunFlag : Checks if the user has opened the app before or not.
+  // If the user is running the app for the first time, return true, else false.
+  static Future<bool> getFirstRunFlag() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(firstRunFlag) ?? true;
   }
 
-  // getStoredAuthToken : Attempts to get a saved authentication token from
-  // persistent storage to connect with Spotify.
-  // If there is no stored token, a FileSystemException is thrown.
-  static Future<String> getStoredAuthToken() async {
-    // Try to read the file.
-    File tokenFile = await Config.tokenFilePath;
-    log("Attempting to get stored auth token from ${tokenFile.path}");
-    return await tokenFile.readAsString();
-  }
-
-  // storeAuthToken : Saves a provided authentication token into app persistent
-  // memory.
-  static Future<void> storeAuthToken(String token) async {
-    File tokenFile = await Config.tokenFilePath;
-    tokenFile.writeAsString(token);
+  // setFirstRunFlag : Sets the first run flag to false
+  static Future<void> setFirstRunFlag() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(firstRunFlag, false);
   }
 
   // loadSecrets : Attempts to load the client ID and redirect URI associated
