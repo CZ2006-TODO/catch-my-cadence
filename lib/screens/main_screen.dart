@@ -1,11 +1,10 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/config.dart';
-import 'package:catch_my_cadence/models/cadence_pedometer.dart';
+import 'package:catch_my_cadence/components/cadence_pedometer.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 // MainScreen is the screen that the user will see after authentication
@@ -19,6 +18,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> {
+  int _currentCadence = 0;
+
   // connectWithSpotify: Calls the SpotifySdk.connectWithSpotify function
   // and shows user an error if connection fails.
   Future<void> connectWithSpotify() async {
@@ -37,10 +38,10 @@ class MainScreenState extends State<MainScreen> {
       String message = (e.toString().contains("CouldNotFindSpotifyApp"))
           ? "It seems you do not have the Spotify App installed!"
           : "You may have logged out of your Spotify App recently.\n\n"
-          "Please check and come back!";
+              "Please check and come back!";
       showDialog(
-          context: context,
-          builder: (_) => FatalErrorDialog(message: message),
+        context: context,
+        builder: (_) => FatalErrorDialog(message: message),
       );
     }
   }
@@ -52,23 +53,24 @@ class MainScreenState extends State<MainScreen> {
     connectWithSpotify();
   }
 
+  void onCadenceChange(updatedCadence) {
+    setState(() {
+      _currentCadence = updatedCadence;
+    });
+  }
+
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
         appBar: AppBar(
           title: Text("Main Screen"),
         ),
-        body: ChangeNotifierProvider(
-          create: (_) => CadencePedometerModel(),
-          child: Center(child: Consumer<CadencePedometerModel>(
-            builder: (context, cp, child) {
-              return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CadencePedometerWidget(cp.currStepCount),
-                  ]);
-            },
-          )),
+        body: Column(
+          children: [
+            CadencePedometer(onCadenceChange),
+            Text(
+                "Cadence state from main screen: " + _currentCadence.toString())
+          ],
         ));
   }
 }
@@ -86,6 +88,6 @@ class CadencePedometerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(steps.toString());
+    return Text(steps.toString() + " steps");
   }
 }
