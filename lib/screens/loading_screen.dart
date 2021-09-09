@@ -32,7 +32,7 @@ class LoadingScreenState extends State<LoadingScreen> {
     // Navigate to required screen based on flag.
     // If flag is true, then should direct user to login screen
     Navigator.of(context).pushReplacementNamed(firstRun
-        ? RouteDelegator.FIRST_RUN_SCREEN_ROUTE
+        ? RouteDelegator.CONFIRM_CONNECTION_SCREEN_ROUTE
         : RouteDelegator.MAIN_SCREEN_ROUTE);
   }
 

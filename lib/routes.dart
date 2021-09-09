@@ -1,4 +1,4 @@
-import 'package:catch_my_cadence/screens/first_run_screen.dart';
+import 'package:catch_my_cadence/screens/confirm_connection_screen.dart';
 import 'package:catch_my_cadence/screens/loading_screen.dart';
 import 'package:catch_my_cadence/screens/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class RouteDelegator {
   static const String LOADING_SCREEN_ROUTE = '/';
   static const String MAIN_SCREEN_ROUTE = '/main';
-  static const String FIRST_RUN_SCREEN_ROUTE = '/connect';
+  static const String CONFIRM_CONNECTION_SCREEN_ROUTE = '/connect';
 
   static Route<dynamic> delegateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -17,8 +17,8 @@ class RouteDelegator {
         return MaterialPageRoute(builder: (ctx) => LoadingScreen());
       case MAIN_SCREEN_ROUTE: // Main screen
         return MaterialPageRoute(builder: (ctx) => MainScreen());
-      case FIRST_RUN_SCREEN_ROUTE: // Login screen
-        return MaterialPageRoute(builder: (ctx) => FirstRunScreen());
+      case CONFIRM_CONNECTION_SCREEN_ROUTE: // Confirm connection screen
+        return MaterialPageRoute(builder: (ctx) => ConfirmConnectionScreen());
       default: // Unexpected error screen
         return MaterialPageRoute(
             builder: (ctx) => Scaffold(body: Center(child: Text("Error!"))));
