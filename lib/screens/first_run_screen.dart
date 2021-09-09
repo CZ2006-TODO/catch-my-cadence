@@ -12,7 +12,7 @@ class FirstRunScreen extends StatelessWidget {
 
   // confirmSpotifyLinkage : This function sets the first run flag to false
   // and then directs user to the main screen.
-  Future<void> authenticateWithSpotify(BuildContext ctx) async {
+  Future<void> confirmSpotifyLinkage(BuildContext ctx) async {
     // Set first run flag to false.
     log("Setting first run flag to false...");
     await Config.setFirstRunFlag();
@@ -29,7 +29,7 @@ class FirstRunScreen extends StatelessWidget {
             child: TextButton(
           child: Text("Connect to Spotify"),
           onPressed: () async {
-            authenticateWithSpotify(ctx);
+            confirmSpotifyLinkage(ctx);
           },
         )));
   }
