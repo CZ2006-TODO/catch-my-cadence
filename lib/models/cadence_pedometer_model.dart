@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+// CadencePedometerModel is in charge of handling the pedometer data, as well
+// as calculating the cadence when necessary.
 class CadencePedometerModel extends ChangeNotifier {
   // Period for calculating cadence.
   static const int CADENCE_CALCULATION_PERIOD = 10;
@@ -25,6 +27,7 @@ class CadencePedometerModel extends ChangeNotifier {
   // initState : Asynchronously initialise the starting state for the model.
   // THis includes setting up the required streams.
   Future<void> initState() async {
+    // TODO: Broken.
     // Request for permission to track steps
     while (!await Permission.activityRecognition.request().isGranted) {
       print("Permission not granted for pedometer, but is required");
@@ -57,9 +60,10 @@ class CadencePedometerModel extends ChangeNotifier {
   // setUpCadenceStream : Sets up the streamer for the cadence.
   void setUpCadenceStream() {
     // When isActive, every TIME_PERIOD, update cadence
-    _cadenceStream =
-        Stream.periodic(const Duration(seconds: CADENCE_CALCULATION_PERIOD));
-    _cadenceStream.takeWhile((_) => _isActive).forEach((_) {
+    _cadenceStream = Stream.periodic(
+      const Duration(seconds: CADENCE_CALCULATION_PERIOD),
+    );
+    _cadenceStream.skipWhile((_) => !_isActive).forEach((_) {
       // To get the cadence, we can simply divide by the sampling period and
       // multiply by 60 to get the steps per minute.
       int updatedCadence = _numberOfSteps ~/

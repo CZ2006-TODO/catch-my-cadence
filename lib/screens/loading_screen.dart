@@ -25,9 +25,8 @@ class LoadingScreenState extends State<LoadingScreen> {
     // Load environment secrets.
     await Config.loadSecrets();
 
-    log("Checking first run status...");
     bool firstRun = await Config.getFirstRunFlag();
-    log("Status: $firstRun");
+    log("First run status: $firstRun");
 
     // Navigate to required screen based on flag.
     // If flag is true, then should direct user to login screen
