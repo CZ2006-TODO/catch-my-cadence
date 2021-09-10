@@ -13,7 +13,7 @@ class Config {
     return dotenv.get("CLIENT_ID", fallback: "read_client_id_err");
   }
 
-  static String get redirectUrl {
+  static String get redirectUri {
     return dotenv.get("REDIRECT_URI", fallback: "read_redirect_uri_err");
   }
 
@@ -36,6 +36,6 @@ class Config {
     await dotenv.load(fileName: "assets/secrets.env");
     log("""Loaded Secrets:
     CLIENT_ID: ${Config.clientId}
-    REDIRECT_URI: ${Config.redirectUrl}""");
+    REDIRECT_URI: ${Config.redirectUri}""");
   }
 }

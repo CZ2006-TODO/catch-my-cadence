@@ -26,7 +26,7 @@ class MainScreenState extends State<MainScreen> {
     try {
       // Attempt to connect to Spotify.
       var res = await SpotifySdk.connectToSpotifyRemote(
-          clientId: Config.clientId, redirectUrl: Config.redirectUrl);
+          clientId: Config.clientId, redirectUrl: Config.redirectUri);
       log(res ? "Connection successful" : "Connection failed!");
     } on PlatformException catch (e) {
       log("PlatformException: ${e.toString()}");
