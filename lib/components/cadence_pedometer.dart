@@ -22,6 +22,8 @@ class CadencePedometerState extends State<CadencePedometer> {
   int _initialNumberOfSteps =
       0; // initial number of steps when loaded. Pedometer tracks number of steps from phone boot
   int _cadence = 0; // cadence of user
+  bool _isActive = false; // whether cadence is being actively calculated
+  Timer timer = null; // timer to calculate cadence
   static const int TIME_PERIOD = 10; // time period to update cadence
   static const int SECONDS_IN_ONE_MINUTE = 60;
 
@@ -54,32 +56,51 @@ class CadencePedometerState extends State<CadencePedometer> {
     _stepCountStream.listen(onStepCount).onError(onStepCountError);
 
     if (!mounted) return;
+  }
 
-    Timer.periodic(
-        Duration(seconds: TIME_PERIOD),
-        (Timer t) => {
-              // every 10 seconds update cadence
-              setState(() {
-                int updatedCadence =
-                    (_numberOfSteps / TIME_PERIOD * SECONDS_IN_ONE_MINUTE)
-                        .round();
-                if (updatedCadence != _cadence) {
-                  widget.onCadenceChange(updatedCadence);
-                }
-                _cadence = updatedCadence;
-                _initialNumberOfSteps += _numberOfSteps;
-                _numberOfSteps = 0;
-              })
-            });
+  void toggleCadenceCalculation() {
+    setState(() {
+      if (_isActive) {
+        timer = Timer.periodic(
+            Duration(seconds: TIME_PERIOD),
+            (Timer t) => {
+                  // every 10 seconds update cadence
+                  setState(() {
+                    int updatedCadence =
+                        (_numberOfSteps / TIME_PERIOD * SECONDS_IN_ONE_MINUTE)
+                            .round();
+                    if (updatedCadence != _cadence) {
+                      widget.onCadenceChange(updatedCadence);
+                    }
+                    _cadence = updatedCadence;
+                    _initialNumberOfSteps += _numberOfSteps;
+                    _numberOfSteps = 0;
+                  })
+                });
+      } else {
+        timer = null;
+      }
+
+      _isActive = !_isActive;
+    })
+ 
   }
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      _cadence.toString() +
-          " steps per minute" +
-          _numberOfSteps.toString() +
-          " steps",
-    );
+    Column(
+      children: [
+        Text(
+          _isActive ? _cadence.toString() +
+              " steps per minute" +
+              _numberOfSteps.toString() +
+              " steps" : "",
+        ),
+        TextButton(
+          child: Text(_isActive ? "Stop" : "Start"),
+          onPressed: toggleCadenceCalculation,
+        )
+      ],
+    ))
   }
 }
