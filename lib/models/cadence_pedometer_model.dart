@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pedometer/pedometer.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 // CadencePedometerModel is in charge of handling the pedometer data, as well
 // as calculating the cadence when necessary.
@@ -13,67 +12,50 @@ class CadencePedometerModel extends ChangeNotifier {
   static const int CADENCE_CALCULATION_PERIOD = 10;
 
   late Stream<StepCount> _stepCountStream;
-  late Stream<void> _cadenceStream;
 
-  int _numberOfSteps = 0; // number of steps in a specific time period
-  int _currentCadence = 0; // current cadence of user
-  bool _isActive = false;
+  late int _numSteps; // number of steps in a specific time period
+  late int _currentCadence; // current cadence of user
+  late bool _isActive;
+  late int _startTime;
 
   CadencePedometerModel() {
+    // TODO: Set up permission checking here.
     // Initialise the starting state for the model.
-    initState();
+    resetState();
   }
 
-  // initState : Asynchronously initialise the starting state for the model.
-  // THis includes setting up the required streams.
-  Future<void> initState() async {
-    // TODO: Broken.
-    // Request for permission to track steps
-    while (!await Permission.activityRecognition.request().isGranted) {
-      print("Permission not granted for pedometer, but is required");
-    }
+  // initState : Initialise the starting state for the model.
+  // This includes setting up the required attributes and streams.
+  void resetState() {
+    _numSteps = _currentCadence = _startTime = 0;
+    _isActive = false;
 
     // Initialise required streams.
     setUpStepCountStream();
-    setUpCadenceStream();
-  }
-
-  // onStepCount : Listener for step count stream.
-  // Used by setUpStepCountStream.
-  void onStepCount(StepCount event) {
-    _numberOfSteps += 1;
-    notifyListeners();
-  }
-
-  // onStepCountError : Log an error if the pedometer encounters an error.
-  // Used by setUpStepCountStream.
-  void onStepCountError(error) {
-    log("Pedometer Error: $error");
   }
 
   // setUpStepCountStream : Sets up the streamer for the step count.
   void setUpStepCountStream() {
     _stepCountStream = Pedometer.stepCountStream;
-    _stepCountStream.listen(onStepCount).onError(onStepCountError);
-  }
-
-  // setUpCadenceStream : Sets up the streamer for the cadence.
-  void setUpCadenceStream() {
-    // When isActive, every TIME_PERIOD, update cadence
-    _cadenceStream = Stream.periodic(
-      const Duration(seconds: CADENCE_CALCULATION_PERIOD),
-    );
-    _cadenceStream.skipWhile((_) => !_isActive).forEach((_) {
-      // To get the cadence, we can simply divide by the sampling period and
-      // multiply by 60 to get the steps per minute.
-      int updatedCadence = _numberOfSteps ~/
-          CADENCE_CALCULATION_PERIOD *
-          Duration.secondsPerMinute;
-
-      _numberOfSteps = 0;
-      _currentCadence = updatedCadence;
-      log("Notifying new cadence: $_currentCadence");
-      notifyListeners();
+    _stepCountStream.listen((StepCount event) {
+      if (_isActive) {
+        _numSteps += 1;
+        if (_numSteps == 1) {
+          _startTime = DateTime.now().millisecondsSinceEpoch;
+          return;
+        }
+        // Calculate the cadence.
+        var thisTime = DateTime.now().millisecondsSinceEpoch;
+        var timeDifference = thisTime - _startTime;
+        // _numSteps taken in timeDifference milliseconds.
+        var calced = (_numSteps / timeDifference *
+            Duration.secondsPerMinute * Duration.millisecondsPerSecond);
+        log("$calced");
+        _currentCadence = calced.round();
+        notifyListeners();
+      }
+    }).onError((e) {
+      log("Pedometer Error: ${e.toString()}");
     });
   }
 
@@ -81,12 +63,18 @@ class CadencePedometerModel extends ChangeNotifier {
   void toggleStatus() {
     _isActive = !_isActive;
     log("Setting active state to $_isActive");
+    if (!_isActive) {
+      log("Active state has been set to false, resetting...");
+      resetState();
+    } else {
+      log("Active state has been set to true, preparing for cadence calculation...");
+    }
     notifyListeners();
   }
 
   // Getters
   int get steps {
-    return _numberOfSteps;
+    return _numSteps;
   }
 
   int get cadence {
