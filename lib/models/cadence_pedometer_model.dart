@@ -8,9 +8,6 @@ import 'package:pedometer/pedometer.dart';
 // CadencePedometerModel is in charge of handling the pedometer data, as well
 // as calculating the cadence when necessary.
 class CadencePedometerModel extends ChangeNotifier {
-  // Period for calculating cadence.
-  static const int CADENCE_CALCULATION_PERIOD = 10;
-
   late Stream<StepCount> _stepCountStream;
 
   late int _numSteps; // number of steps in a specific time period
