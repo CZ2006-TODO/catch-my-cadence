@@ -12,7 +12,6 @@ class CadencePedometerModel extends ChangeNotifier {
   bool _isActive = false;
 
   static const int TIME_PERIOD = 10; // time period to update cadence
-  static const int SECONDS_IN_ONE_MINUTE = 60;
 
   CadencePedometerModel() {
     initState();
@@ -42,7 +41,7 @@ class CadencePedometerModel extends ChangeNotifier {
         .takeWhile((_) => _isActive)
         .forEach((e) {
       int updatedCadence =
-          (_numberOfSteps / TIME_PERIOD * SECONDS_IN_ONE_MINUTE).round();
+          (_numberOfSteps / TIME_PERIOD * Duration.secondsPerMinute).round();
 
       _numberOfSteps = 0;
       _currentCadence = updatedCadence;
