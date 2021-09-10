@@ -8,7 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 // CadencePedometerModel is in charge of handling the pedometer data, as well
 // as calculating the cadence when necessary.
-class CadencePedometerModel extends ChangeNotifier {
+class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
   // Period for calculating cadence.
   static const int CADENCE_CALCULATION_PERIOD = 10;
 
@@ -18,6 +18,8 @@ class CadencePedometerModel extends ChangeNotifier {
   int _numberOfSteps = 0; // number of steps in a specific time period
   int _currentCadence = 0; // current cadence of user
   bool _isActive = false;
+  bool _shouldRestartPedometer = false;
+  PermissionStatus? _permissionStatus;
 
   CadencePedometerModel() {
     // Initialise the starting state for the model.
@@ -27,38 +29,69 @@ class CadencePedometerModel extends ChangeNotifier {
   // initState : Asynchronously initialise the starting state for the model.
   // THis includes setting up the required streams.
   Future<void> initState() async {
-    // TODO: Broken.
     // Request for permission to track steps
-    while (!await Permission.activityRecognition.request().isGranted) {
-      print("Permission not granted for pedometer, but is required");
-    }
+    _checkPermission();
 
-    // Initialise required streams.
-    setUpStepCountStream();
-    setUpCadenceStream();
+    // Initialise required streams and variables.
+    _setUpStepCountStream();
+    _setUpCadenceStream();
+    _shouldRestartPedometer = false;
+
+    // add observer
+    WidgetsBinding.instance?.addObserver(this);
   }
 
-  // onStepCount : Listener for step count stream.
-  // Used by setUpStepCountStream.
-  void onStepCount(StepCount event) {
+  @override
+  // remove observer and dispose when complete
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  // if permissions are changed from outside, we should update it
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkPermission();
+    }
+  }
+
+  Future<void> _checkPermission() async {
+    PermissionStatus permissionStatus =
+        await Permission.activityRecognition.status;
+    _permissionStatus = permissionStatus;
+
+    // flag to indicate that once permission is granted later, we should restart pedometer
+    if (!permissionStatus.isGranted && !_shouldRestartPedometer) {
+      _shouldRestartPedometer = true;
+    }
+    notifyListeners();
+  }
+
+  void manuallyGrantPermission() async {
+    await openAppSettings();
+  }
+
+  // _onStepCount : Listener for step count stream.
+  // Used by _setUpStepCountStream.
+  void _onStepCount(StepCount event) {
     _numberOfSteps += 1;
     notifyListeners();
   }
 
-  // onStepCountError : Log an error if the pedometer encounters an error.
-  // Used by setUpStepCountStream.
-  void onStepCountError(error) {
+  // _onStepCountError : Log an error if the pedometer encounters an error.
+  // Used by _setUpStepCountStream.
+  void _onStepCountError(error) {
     log("Pedometer Error: $error");
   }
 
-  // setUpStepCountStream : Sets up the streamer for the step count.
-  void setUpStepCountStream() {
+  // _setUpStepCountStream : Sets up the streamer for the step count.
+  void _setUpStepCountStream() {
     _stepCountStream = Pedometer.stepCountStream;
-    _stepCountStream.listen(onStepCount).onError(onStepCountError);
+    _stepCountStream.listen(_onStepCount).onError(_onStepCountError);
   }
 
-  // setUpCadenceStream : Sets up the streamer for the cadence.
-  void setUpCadenceStream() {
+  // _setUpCadenceStream : Sets up the streamer for the cadence.
+  void _setUpCadenceStream() {
     // When isActive, every TIME_PERIOD, update cadence
     _cadenceStream = Stream.periodic(
       const Duration(seconds: CADENCE_CALCULATION_PERIOD),
@@ -80,6 +113,7 @@ class CadencePedometerModel extends ChangeNotifier {
   // toggleStatus : Toggle isActive.
   void toggleStatus() {
     _isActive = !_isActive;
+    _checkPermission();
     log("Setting active state to $_isActive");
     notifyListeners();
   }
@@ -95,5 +129,13 @@ class CadencePedometerModel extends ChangeNotifier {
 
   bool get isActive {
     return _isActive;
+  }
+
+  bool get isGranted {
+    return _permissionStatus!.isGranted;
+  }
+
+  bool get shouldRestartPedometer {
+    return _shouldRestartPedometer && _permissionStatus!.isGranted;
   }
 }

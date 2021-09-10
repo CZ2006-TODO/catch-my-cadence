@@ -4,6 +4,7 @@ import 'package:catch_my_cadence/config.dart';
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
+import 'package:catch_my_cadence/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -72,20 +73,57 @@ class MainScreenBody extends StatelessWidget {
     return ChangeNotifierProvider(
         create: (_) => CadencePedometerModel(),
         child: Center(child: Consumer<CadencePedometerModel>(
-          builder: (context, cadped, child) {
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
+          builder: (context, cadencePedometer, child) {
+            if (cadencePedometer.shouldRestartPedometer) {
+              return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Please restart application for changes to take place",
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context)
+                          .pushReplacementNamed(
+                              RouteDelegator.LOADING_SCREEN_ROUTE),
+                      child: Text("Restart App"),
+                    )
+                  ]);
+            }
+
+            if (!cadencePedometer.isGranted) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Permissions for pedometer not granted. Open app settings, and restart application",
+                    textAlign: TextAlign.center,
+                  ),
                   ElevatedButton(
-                    child: Text(cadped.isActive ? "Stop" : "Start"),
-                    onPressed: () => cadped.toggleStatus(),
+                    onPressed: () => cadencePedometer.manuallyGrantPermission(),
+                    child: Text("Open app settings"),
+                  ),
+                ],
+              );
+            }
+
+            return Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    child: Text(cadencePedometer.isActive ? "Stop" : "Start"),
+                    onPressed: () => cadencePedometer.toggleStatus(),
                   ),
                   CadencePedometerWidget(
-                    cadenceActive: cadped.isActive,
-                    steps: cadped.steps,
-                    cadence: cadped.cadence,
-                  ),
-                ]);
+                    cadenceActive: cadencePedometer.isActive,
+                    steps: cadencePedometer.steps,
+                    cadence: cadencePedometer.cadence,
+                  )
+                ],
+              ),
+            );
           },
         )));
   }
