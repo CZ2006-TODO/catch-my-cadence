@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/config.dart';
-import 'package:catch_my_cadence/components/cadence_pedometer_model.dart';
-import 'package:catch_my_cadence/widgets/cadence_pedometer_widget.dart';
+import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
+import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -55,34 +55,40 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext ctx) {
-    return ChangeNotifierProvider(
-        create: (context) => CadencePedometerModel(),
-        child: Consumer<CadencePedometerModel>(
-            builder: (context, pedometer, child) {
-          return Scaffold(
-              appBar: AppBar(
-                title: Text("Main Screen"),
-              ),
-              body: Column(
-                children: [
-                  Text(
-                    "Cadence state from main screen: " +
-                        pedometer.getCadence().toString() +
-                        " " +
-                        pedometer.getSteps().toString() +
-                        " " +
-                        (pedometer.getIsActive() ? "Active" : "Inactive"),
-                  ),
-                  ElevatedButton(
-                      onPressed: () => setState(() => pedometer.toggleStatus()),
-                      child: Text(pedometer.getIsActive() ? "Stop" : "Start")),
-                  CadencePedometerWidget(pedometer.getCadence())
-                ],
-              ));
-        }));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Main Screen"),
+      ),
+      body: MainScreenBody(),
+    );
   }
 }
 
 /*
 * This part contains the other widgets that MainScreen makes use of.
 * */
+
+class MainScreenBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext ctx) {
+    return ChangeNotifierProvider(
+        create: (_) => CadencePedometerModel(),
+        child: Center(child: Consumer<CadencePedometerModel>(
+          builder: (context, cadped, child) {
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  ElevatedButton(
+                    child: Text(cadped.isActive ? "Stop" : "Start"),
+                    onPressed: () => cadped.toggleStatus(),
+                  ),
+                  CadencePedometerWidget(
+                    cadenceActive: cadped.isActive,
+                    steps: cadped.steps,
+                    cadence: cadped.cadence,
+                  ),
+                ]);
+          },
+        )));
+  }
+}

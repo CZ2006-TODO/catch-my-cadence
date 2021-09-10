@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Config stores the general global variables
 class Config {
   // Private
-  static final String firstRunFlag = "first_run";
+  static final String _firstRunFlag = "first_run";
 
   // Public
   static String get clientId {
@@ -21,13 +21,13 @@ class Config {
   // If the user is running the app for the first time, return true, else false.
   static Future<bool> getFirstRunFlag() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(firstRunFlag) ?? true;
+    return prefs.getBool(_firstRunFlag) ?? true;
   }
 
   // setFirstRunFlag : Sets the first run flag to false
   static Future<void> setFirstRunFlag() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(firstRunFlag, false);
+    prefs.setBool(_firstRunFlag, false);
   }
 
   // loadSecrets : Attempts to load the client ID and redirect URI associated
