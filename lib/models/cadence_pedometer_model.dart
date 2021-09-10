@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pedometer/pedometer.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 // CadencePedometerModel is in charge of handling the pedometer data, as well
 // as calculating the cadence when necessary.
@@ -19,6 +18,7 @@ class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
   PermissionStatus? _permissionStatus;
 
   CadencePedometerModel() {
+    // TODO: Set up permission checking here.
     // Initialise the starting state for the model.
     resetState();
     initState();
@@ -114,11 +114,17 @@ class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
       resetState();
     }
     log("Setting active state to $_isActive");
+    if (!_isActive) {
+      log("Active state has been set to false, resetting...");
+      resetState();
+    } else {
+      log("Active state has been set to true, preparing for cadence calculation...");
+    }
     notifyListeners();
   }
 
   int get steps {
-    return _numberOfSteps;
+    return _numSteps;
   }
 
   int get cadence {

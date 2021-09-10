@@ -23,6 +23,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   late Stream<ConnectionStatus> spotifyConnection;
+  
   // connectWithSpotify: Calls the SpotifySdk.connectWithSpotify function
   // and shows user an error if connection fails.
   Future<void> connectWithSpotify() async {

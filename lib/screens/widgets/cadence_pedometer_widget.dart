@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 // whether cadence calculation is active, and if yes, the calculated cadence.
 class CadencePedometerWidget extends StatelessWidget {
   late final bool cadenceActive;
-  late final int steps;
+  late final String steps;
   late final String cadence;
 
   CadencePedometerWidget(
-      {required this.cadenceActive,
-      required this.steps,
-      required int cadence}) {
-    this.cadence = (this.cadenceActive) ? cadence.toString() : "-";
+      {required this.cadenceActive, required int steps, required int cadence}) {
+    if (this.cadenceActive) {
+      this.steps = steps.toString();
+      this.cadence = cadence.toString();
+    } else {
+      this.steps = this.cadence = "-";
+    }
   }
 
   @override
