@@ -35,6 +35,8 @@ class CadencePedometerModel extends ChangeNotifier {
   }
 
   // setUpStepCountStream : Sets up the streamer for the step count.
+  // https://www.all8.com/tools/bpm.htm
+  // Quite accurate, trying to replicate.
   void setUpStepCountStream() {
     _stepCountStream = Pedometer.stepCountStream;
     _stepCountStream.listen((StepCount event) {
