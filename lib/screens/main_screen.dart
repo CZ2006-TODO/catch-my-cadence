@@ -19,6 +19,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   int _currentCadence = 0;
+  bool _isActive = false;
 
   // connectWithSpotify: Calls the SpotifySdk.connectWithSpotify function
   // and shows user an error if connection fails.
@@ -67,9 +68,13 @@ class MainScreenState extends State<MainScreen> {
         ),
         body: Column(
           children: [
-            CadencePedometer(onCadenceChange),
+            CadencePedometer(onCadenceChange, _isActive),
             Text(
-                "Cadence state from main screen: " + _currentCadence.toString())
+              "Cadence state from main screen: " + _currentCadence.toString(),
+            ),
+            ElevatedButton(
+                onPressed: () => setState(() => _isActive = !_isActive),
+                child: Text(_isActive ? "Stop" : "Start"))
           ],
         ));
   }

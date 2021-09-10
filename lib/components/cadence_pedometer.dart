@@ -9,8 +9,9 @@ import 'package:permission_handler/permission_handler.dart';
 class CadencePedometer extends StatefulWidget {
   final Function
       onCadenceChange; // A function that runs everytime cadence changes. (int updatedCadence) => void
+  final bool isActive;
 
-  CadencePedometer(this.onCadenceChange);
+  CadencePedometer(this.onCadenceChange, this.isActive);
   @override
   CadencePedometerState createState() => CadencePedometerState();
 }
@@ -19,11 +20,8 @@ class CadencePedometerState extends State<CadencePedometer> {
   late Stream<StepCount>
       _stepCountStream; // for pedometer to keep track of steps
   int _numberOfSteps = 0; // number of steps in a specific time period
-  int _initialNumberOfSteps =
-      0; // initial number of steps when loaded. Pedometer tracks number of steps from phone boot
-  int _cadence = 0; // cadence of user
-  bool _isActive = false; // whether cadence is being actively calculated
-  Timer timer = null; // timer to calculate cadence
+  int _currentCadence = 0; // current cadence of user
+
   static const int TIME_PERIOD = 10; // time period to update cadence
   static const int SECONDS_IN_ONE_MINUTE = 60;
 
@@ -35,11 +33,7 @@ class CadencePedometerState extends State<CadencePedometer> {
 
   void onStepCount(StepCount event) {
     setState(() {
-      if (_initialNumberOfSteps == 0) {
-        _initialNumberOfSteps = event.steps;
-      } else {
-        _numberOfSteps = event.steps - _initialNumberOfSteps;
-      }
+      _numberOfSteps += 1;
     });
   }
 
@@ -48,59 +42,47 @@ class CadencePedometerState extends State<CadencePedometer> {
   }
 
   void initPlatformState() async {
+    // request for permission to track steps
     if (!await Permission.activityRecognition.request().isGranted) {
       print("Permission not granted");
     }
 
+    // initalise pedometer and listen
     _stepCountStream = Pedometer.stepCountStream;
     _stepCountStream.listen(onStepCount).onError(onStepCountError);
 
+    // when isActive, every TIME_PERIOD, update cadence
+    Stream.periodic(const Duration(seconds: TIME_PERIOD))
+        .takeWhile((_) => widget.isActive)
+        .forEach((e) {
+      setState(() {
+        int updatedCadence =
+            (_numberOfSteps / TIME_PERIOD * SECONDS_IN_ONE_MINUTE).round();
+
+        if (updatedCadence != _currentCadence) {
+          widget.onCadenceChange(updatedCadence);
+        }
+
+        _currentCadence = updatedCadence;
+        _numberOfSteps = 0;
+      });
+    });
     if (!mounted) return;
-  }
-
-  void toggleCadenceCalculation() {
-    setState(() {
-      if (_isActive) {
-        timer = Timer.periodic(
-            Duration(seconds: TIME_PERIOD),
-            (Timer t) => {
-                  // every 10 seconds update cadence
-                  setState(() {
-                    int updatedCadence =
-                        (_numberOfSteps / TIME_PERIOD * SECONDS_IN_ONE_MINUTE)
-                            .round();
-                    if (updatedCadence != _cadence) {
-                      widget.onCadenceChange(updatedCadence);
-                    }
-                    _cadence = updatedCadence;
-                    _initialNumberOfSteps += _numberOfSteps;
-                    _numberOfSteps = 0;
-                  })
-                });
-      } else {
-        timer = null;
-      }
-
-      _isActive = !_isActive;
-    })
- 
   }
 
   @override
   Widget build(BuildContext context) {
-    Column(
+    return Column(
       children: [
         Text(
-          _isActive ? _cadence.toString() +
-              " steps per minute" +
-              _numberOfSteps.toString() +
-              " steps" : "",
+          widget.isActive
+              ? _currentCadence.toString() +
+                  " steps per minute" +
+                  _numberOfSteps.toString() +
+                  " steps"
+              : "",
         ),
-        TextButton(
-          child: Text(_isActive ? "Stop" : "Start"),
-          onPressed: toggleCadenceCalculation,
-        )
       ],
-    ))
+    );
   }
 }
