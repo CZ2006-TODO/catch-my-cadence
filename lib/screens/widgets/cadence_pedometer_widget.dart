@@ -8,9 +8,7 @@ class CadencePedometerWidget extends StatelessWidget {
   late final String cadence;
 
   CadencePedometerWidget(
-      {required this.cadenceActive,
-      required int steps,
-      required int cadence}) {
+      {required this.cadenceActive, required int steps, required int cadence}) {
     if (this.cadenceActive) {
       this.steps = steps.toString();
       this.cadence = cadence.toString();

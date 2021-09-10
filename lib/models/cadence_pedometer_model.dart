@@ -47,8 +47,10 @@ class CadencePedometerModel extends ChangeNotifier {
         var thisTime = DateTime.now().millisecondsSinceEpoch;
         var timeDifference = thisTime - _startTime;
         // _numSteps taken in timeDifference milliseconds.
-        var calced = (_numSteps / timeDifference *
-            Duration.secondsPerMinute * Duration.millisecondsPerSecond);
+        var calced = (_numSteps /
+            timeDifference *
+            Duration.secondsPerMinute *
+            Duration.millisecondsPerSecond);
         log("$calced");
         _currentCadence = calced.round();
         notifyListeners();
