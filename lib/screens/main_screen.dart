@@ -8,6 +8,7 @@ import 'package:catch_my_cadence/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 // MainScreen is the screen that the user will see after authentication
@@ -21,14 +22,24 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> {
+  late Stream<ConnectionStatus> spotifyConnection;
   // connectWithSpotify: Calls the SpotifySdk.connectWithSpotify function
   // and shows user an error if connection fails.
   Future<void> connectWithSpotify() async {
     try {
       // Attempt to connect to Spotify.
-      var res = await SpotifySdk.connectToSpotifyRemote(
-          clientId: Config.clientId, redirectUrl: Config.redirectUri);
-      log(res ? "Connection successful" : "Connection failed!");
+      spotifyConnection = SpotifySdk.subscribeConnectionStatus()
+        ..listen((event) async {
+          log("Polling connection...");
+          if (!event.connected) {
+            log("Connection to Spotify app lost! Attempting reconnect...");
+            await SpotifySdk.connectToSpotifyRemote(
+                clientId: Config.clientId, redirectUrl: Config.redirectUri);
+          }
+          log("Poll complete!");
+        }).onError((e) {
+          log("Error attempting Spotify reconnect: ${e.toString()}");
+        });
     } on PlatformException catch (e) {
       log("PlatformException: ${e.toString()}");
 

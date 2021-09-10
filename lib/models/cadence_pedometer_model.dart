@@ -9,21 +9,27 @@ import 'package:permission_handler/permission_handler.dart';
 // CadencePedometerModel is in charge of handling the pedometer data, as well
 // as calculating the cadence when necessary.
 class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
-  // Period for calculating cadence.
-  static const int CADENCE_CALCULATION_PERIOD = 10;
-
   late Stream<StepCount> _stepCountStream;
-  late Stream<void> _cadenceStream;
 
-  int _numberOfSteps = 0; // number of steps in a specific time period
-  int _currentCadence = 0; // current cadence of user
-  bool _isActive = false;
-  bool _shouldRestartPedometer = false;
+  late int _numberOfSteps; // number of steps in a specific time period
+  late int _currentCadence; // current cadence of user
+  late bool _isActive;
+  late bool _shouldRestartPedometer;
+  late int _startTime;
   PermissionStatus? _permissionStatus;
 
   CadencePedometerModel() {
     // Initialise the starting state for the model.
+    resetState();
     initState();
+  }
+
+  void resetState() {
+    _numberOfSteps = 0;
+    _currentCadence = 0;
+    _isActive = false;
+    _shouldRestartPedometer = false;
+    _startTime = 0;
   }
 
   // initState : Asynchronously initialise the starting state for the model.
@@ -34,7 +40,6 @@ class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
 
     // Initialise required streams and variables.
     _setUpStepCountStream();
-    _setUpCadenceStream();
     _shouldRestartPedometer = false;
 
     // add observer
@@ -71,42 +76,31 @@ class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
     await openAppSettings();
   }
 
-  // _onStepCount : Listener for step count stream.
-  // Used by _setUpStepCountStream.
-  void _onStepCount(StepCount event) {
-    _numberOfSteps += 1;
-    notifyListeners();
-  }
-
-  // _onStepCountError : Log an error if the pedometer encounters an error.
-  // Used by _setUpStepCountStream.
-  void _onStepCountError(error) {
-    log("Pedometer Error: $error");
-  }
-
   // _setUpStepCountStream : Sets up the streamer for the step count.
+  // Implementation from https://www.all8.com/tools/hpm.htm
   void _setUpStepCountStream() {
     _stepCountStream = Pedometer.stepCountStream;
-    _stepCountStream.listen(_onStepCount).onError(_onStepCountError);
-  }
-
-  // _setUpCadenceStream : Sets up the streamer for the cadence.
-  void _setUpCadenceStream() {
-    // When isActive, every TIME_PERIOD, update cadence
-    _cadenceStream = Stream.periodic(
-      const Duration(seconds: CADENCE_CALCULATION_PERIOD),
-    );
-    _cadenceStream.skipWhile((_) => !_isActive).forEach((_) {
-      // To get the cadence, we can simply divide by the sampling period and
-      // multiply by 60 to get the steps per minute.
-      int updatedCadence = _numberOfSteps ~/
-          CADENCE_CALCULATION_PERIOD *
-          Duration.secondsPerMinute;
-
-      _numberOfSteps = 0;
-      _currentCadence = updatedCadence;
-      log("Notifying new cadence: $_currentCadence");
-      notifyListeners();
+    _stepCountStream.listen((StepCount event) {
+      if (_isActive) {
+        _numberOfSteps += 1;
+        if (_numberOfSteps == 1) {
+          _startTime = DateTime.now().millisecondsSinceEpoch;
+          return;
+        }
+        // Calculate the cadence.
+        var thisTime = DateTime.now().millisecondsSinceEpoch;
+        var timeDifference = thisTime - _startTime;
+        // _numberOfSteps taken in timeDifference milliseconds.
+        var calced = (_numberOfSteps /
+            timeDifference *
+            Duration.secondsPerMinute *
+            Duration.millisecondsPerSecond);
+        log("$calced");
+        _currentCadence = calced.round();
+        notifyListeners();
+      }
+    }).onError((e) {
+      log("Pedometer Error: ${e.toString()}");
     });
   }
 
@@ -114,11 +108,15 @@ class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
   void toggleStatus() {
     _isActive = !_isActive;
     _checkPermission();
+
+    if (!_isActive) {
+      log("Inactive, resetting...");
+      resetState();
+    }
     log("Setting active state to $_isActive");
     notifyListeners();
   }
 
-  // Getters
   int get steps {
     return _numberOfSteps;
   }
@@ -132,10 +130,11 @@ class CadencePedometerModel extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   bool get isGranted {
-    return _permissionStatus!.isGranted;
+    return _permissionStatus != null ? _permissionStatus!.isGranted : false;
   }
 
   bool get shouldRestartPedometer {
-    return _shouldRestartPedometer && _permissionStatus!.isGranted;
+    return _shouldRestartPedometer &&
+        (_permissionStatus != null ? _permissionStatus!.isGranted : false);
   }
 }
