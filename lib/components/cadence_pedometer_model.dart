@@ -28,8 +28,8 @@ class CadencePedometerModel extends ChangeNotifier {
 
   void initState() async {
     // request for permission to track steps
-    if (!await Permission.activityRecognition.request().isGranted) {
-      print("Permission not granted");
+    while (!await Permission.activityRecognition.request().isGranted) {
+      print("Permission not granted for pedometer, but is required");
     }
 
     // initalise pedometer and listen
