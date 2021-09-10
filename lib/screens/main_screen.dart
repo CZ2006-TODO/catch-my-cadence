@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/config.dart';
-import 'package:catch_my_cadence/components/cadence_pedometer.dart';
+import 'package:catch_my_cadence/components/cadence_pedometer_model.dart';
+import 'package:catch_my_cadence/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 // MainScreen is the screen that the user will see after authentication
@@ -18,9 +20,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> {
-  int _currentCadence = 0;
-  bool _isActive = false;
-
   // connectWithSpotify: Calls the SpotifySdk.connectWithSpotify function
   // and shows user an error if connection fails.
   Future<void> connectWithSpotify() async {
@@ -54,45 +53,36 @@ class MainScreenState extends State<MainScreen> {
     connectWithSpotify();
   }
 
-  void onCadenceChange(updatedCadence) {
-    setState(() {
-      _currentCadence = updatedCadence;
-    });
-  }
-
   @override
   Widget build(BuildContext ctx) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Main Screen"),
-        ),
-        body: Column(
-          children: [
-            CadencePedometer(onCadenceChange, _isActive),
-            Text(
-              "Cadence state from main screen: " + _currentCadence.toString(),
-            ),
-            ElevatedButton(
-                onPressed: () => setState(() => _isActive = !_isActive),
-                child: Text(_isActive ? "Stop" : "Start"))
-          ],
-        ));
+    return ChangeNotifierProvider(
+        create: (context) => CadencePedometerModel(),
+        child: Consumer<CadencePedometerModel>(
+            builder: (context, pedometer, child) {
+          return Scaffold(
+              appBar: AppBar(
+                title: Text("Main Screen"),
+              ),
+              body: Column(
+                children: [
+                  Text(
+                    "Cadence state from main screen: " +
+                        pedometer.getCadence().toString() +
+                        " " +
+                        pedometer.getSteps().toString() +
+                        " " +
+                        (pedometer.getIsActive() ? "Active" : "Inactive"),
+                  ),
+                  ElevatedButton(
+                      onPressed: () => setState(() => pedometer.toggleStatus()),
+                      child: Text(pedometer.getIsActive() ? "Stop" : "Start")),
+                  CadencePedometerWidget(pedometer.getCadence())
+                ],
+              ));
+        }));
   }
 }
 
 /*
 * This part contains the other widgets that MainScreen makes use of.
 * */
-
-class CadencePedometerWidget extends StatelessWidget {
-  late final int steps;
-
-  CadencePedometerWidget(int steps) {
-    this.steps = steps;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(steps.toString() + " steps");
-  }
-}
