@@ -64,10 +64,8 @@ class MainScreenState extends State<MainScreen> {
   }
 }
 
-/*
-* This part contains the other widgets that MainScreen makes use of.
-* */
-
+// MainScreenBody is the widget that acts as the main body of the main screen.
+// This widget contains the CadencePedometerModel.
 class MainScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {

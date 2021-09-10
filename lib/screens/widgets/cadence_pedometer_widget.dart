@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// CadencePedometerWidget shows the current pedometer step count,
+// whether cadence calculation is active, and if yes, the calculated cadence.
 class CadencePedometerWidget extends StatelessWidget {
   late final bool cadenceActive;
   late final int steps;
