@@ -8,7 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 // LoadingScreen shows the loading screen when the user first starts the app.
 // This screen contains the logic of checking the user authentication,
 // and then routing the user to the appropriate screen.
-class LoadingScreen extends StatefulWidget with WidgetsBindingObserver {
+class LoadingScreen extends StatefulWidget {
   LoadingScreen({Key? key}) : super(key: key);
 
   @override

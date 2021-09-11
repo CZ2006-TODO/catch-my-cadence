@@ -16,7 +16,6 @@ class CadencePedometerModel extends ChangeNotifier {
   late int _startTime; // Milliseconds from epoch of first stop from start.
 
   CadencePedometerModel() {
-    // TODO: Set up permission checking here.
     // Initialise the starting state for the model.
     resetState();
   }
