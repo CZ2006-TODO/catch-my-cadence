@@ -10,10 +10,10 @@ import 'package:pedometer/pedometer.dart';
 class CadencePedometerModel extends ChangeNotifier {
   late Stream<StepCount> _stepCountStream;
 
-  late int _numSteps; // number of steps in a specific time period
-  late int _currentCadence; // current cadence of user
-  late bool _isActive;
-  late int _startTime;
+  late int _numSteps; // Number of steps from start.
+  late int _currentCadence; // Current cadence of user
+  late bool _isActive; // Whether cadence is being calculated
+  late int _startTime; // Milliseconds from epoch of first stop from start.
 
   CadencePedometerModel() {
     // TODO: Set up permission checking here.
@@ -47,12 +47,12 @@ class CadencePedometerModel extends ChangeNotifier {
         var thisTime = DateTime.now().millisecondsSinceEpoch;
         var timeDifference = thisTime - _startTime;
         // _numSteps taken in timeDifference milliseconds.
-        var calced = (_numSteps /
+        var calculatedCadence = (_numSteps /
             timeDifference *
             Duration.secondsPerMinute *
             Duration.millisecondsPerSecond);
-        log("$calced");
-        _currentCadence = calced.round();
+        log("$calculatedCadence");
+        _currentCadence = calculatedCadence.round();
         notifyListeners();
       }
     }).onError((e) {
