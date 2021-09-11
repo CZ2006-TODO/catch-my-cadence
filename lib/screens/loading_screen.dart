@@ -27,9 +27,14 @@ class LoadingScreenState extends State<LoadingScreen>
     // Load environment secrets.
     await Config.loadSecrets();
 
+    // Check permission
     _checkActivityRecognitionPermissionAndProceed();
   }
 
+  // _checkActivityRecognitionPermissionAndProceed : Checks whether
+  // the ActivityRecognition permission has been granted.
+  // If yes, then navigate user to required screen based on first run status.
+  // If no, then keep prompting user for the permission.
   Future<void> _checkActivityRecognitionPermissionAndProceed() async {
     if (!(await Permission.activityRecognition.isGranted)) {
       _requestActivityRecognitionPermission();
@@ -45,6 +50,8 @@ class LoadingScreenState extends State<LoadingScreen>
     }
   }
 
+  // _requestActivityRecognitionPermission : Shows a dialog to the user asking
+  // for activity recognition permission.
   Future<void> _requestActivityRecognitionPermission() async {
     log("Activity Recognition Permission not granted, requesting...");
     showDialog(
