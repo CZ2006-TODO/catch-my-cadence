@@ -13,7 +13,7 @@ class CadencePedometerModel extends ChangeNotifier {
   late int _numSteps; // Number of steps from start.
   late int _currentCadence; // Current cadence of user
   late bool _isActive; // Whether cadence is being calculated
-  late int _startTime; // Milliseconds from epoch of first stop from start.
+  late int _startTime; // Milliseconds from epoch of start.
 
   CadencePedometerModel() {
     // Initialise the starting state for the model.
