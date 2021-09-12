@@ -18,6 +18,9 @@ class CadencePedometerModel extends ChangeNotifier {
   CadencePedometerModel() {
     // Initialise the starting state for the model.
     resetState();
+
+    // Set up the pedometer stream.
+    setUpStepCountStream();
   }
 
   // initState : Initialise the starting state for the model.
@@ -25,9 +28,6 @@ class CadencePedometerModel extends ChangeNotifier {
   void resetState() {
     _numSteps = _currentCadence = _startTime = 0;
     _isActive = false;
-
-    // Initialise required streams.
-    setUpStepCountStream();
   }
 
   // setUpStepCountStream : Sets up the streamer for the step count.
@@ -39,7 +39,9 @@ class CadencePedometerModel extends ChangeNotifier {
       if (_isActive) {
         _numSteps += 1;
         if (_numSteps == 1) {
-          _startTime = DateTime.now().millisecondsSinceEpoch;
+          _startTime = (_startTime +
+                  0.33 * (DateTime.now().millisecondsSinceEpoch - _startTime))
+              .round();
           return;
         }
         // Calculate the cadence.
@@ -67,6 +69,7 @@ class CadencePedometerModel extends ChangeNotifier {
       log("Active state has been set to false, resetting...");
       resetState();
     } else {
+      _startTime = DateTime.now().millisecondsSinceEpoch;
       log("Active state has been set to true, preparing for cadence calculation...");
     }
     notifyListeners();
