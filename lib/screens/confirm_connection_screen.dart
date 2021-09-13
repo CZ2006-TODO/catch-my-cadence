@@ -26,7 +26,7 @@ class ConfirmConnectionScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: Text("Login Screen")),
         body: Center(
-            child: TextButton(
+            child: ElevatedButton(
           child: Text("Connect to Spotify"),
           onPressed: () async {
             confirmSpotifyLinkage(ctx);

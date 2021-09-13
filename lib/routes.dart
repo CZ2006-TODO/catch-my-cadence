@@ -10,8 +10,6 @@ class RouteDelegator {
   static const String CONFIRM_CONNECTION_SCREEN_ROUTE = '/connect';
 
   static Route<dynamic> delegateRoute(RouteSettings settings) {
-    final args = settings.arguments;
-
     switch (settings.name) {
       case LOADING_SCREEN_ROUTE: // Loading screen
         return MaterialPageRoute(builder: (ctx) => LoadingScreen());
