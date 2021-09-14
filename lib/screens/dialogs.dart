@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// ErrorDialog : Shows an AlertDialog with an error message,
-// and only a single button to dismiss the dialog.
-class ErrorDialog extends AlertDialog {
-  ErrorDialog(BuildContext context, String message)
-      : super(title: T!"),
+// ErrorD
               onPressed: () {
                 Navigator.of(context).pop();
               }),
