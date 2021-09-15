@@ -73,6 +73,7 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext ctx) {
+    // TODO: Add the SideBar here.
     return Scaffold(
       appBar: AppBar(
         title: Text("Main Screen"),
@@ -87,8 +88,12 @@ class MainScreenState extends State<MainScreen> {
 class MainScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    return ChangeNotifierProvider(
-        create: (_) => CadencePedometerModel(),
+    // TODO: Add Spotify model to the body.
+    // Prepare body to hold multiple providers.
+    return MultiProvider(
+        providers: [
+          Provider(create: (_) => CadencePedometerModel()),
+        ],
         child: Center(child: Consumer<CadencePedometerModel>(
           builder: (context, cadped, child) {
             return Column(
