@@ -30,6 +30,10 @@ class MainScreenBody extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CadencePedometerModel()),
+
+          // If required, the interaction between the 2 will change.
+          // Right now, I can foresee a need for a proxy provider for communication
+          // between GetSongBPMModel and SpotifyControllerModel
           Provider(create: (ctx) => GetSongBPMModel()),
           // lazy is set to false because usually models are not created until
           // they are needed, but we want to connect the moment user enters the
