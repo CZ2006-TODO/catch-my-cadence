@@ -9,6 +9,7 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 
 // SpotifyControllerModel is in charge of communicating and controlling the
 // Spotify App.
+// TODO: Only does connection right now. Should also implement other stuff like the playing logic.
 class SpotifyControllerModel {
   late Stream<ConnectionStatus> spotifyConnection;
 

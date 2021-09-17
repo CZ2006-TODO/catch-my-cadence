@@ -1,4 +1,5 @@
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
+import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class MainScreenBody extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CadencePedometerModel()),
+          Provider(create: (ctx) => GetSongBPMModel()),
           // lazy is set to false because usually models are not created until
           // they are needed, but we want to connect the moment user enters the
           // main screen.
