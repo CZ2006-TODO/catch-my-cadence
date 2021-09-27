@@ -17,6 +17,11 @@ class Config {
     return dotenv.get("REDIRECT_URI", fallback: "read_redirect_uri_err");
   }
 
+  static String get getSongBpmApiKey {
+    return dotenv.get("GET_SONG_BPM_API_KEY",
+        fallback: "read_song_bpm_api_err");
+  }
+
   // getFirstRunFlag : Checks if the user has opened the app before or not.
   // If the user is running the app for the first time, return true, else false.
   static Future<bool> getFirstRunFlag() async {
