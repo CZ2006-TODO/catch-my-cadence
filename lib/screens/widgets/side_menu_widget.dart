@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../main_screen.dart';
+import 'package:catch_my_cadence/screens/main_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({Key? key}) : super(key: key);

@@ -2,6 +2,7 @@ import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
+import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ class MainScreen extends StatelessWidget {
         title: Text("Main Screen"),
       ),
       body: MainScreenBody(),
-      drawer: SideMenuState(),
+      drawer: SideMenu(),
     );
   }
 }
@@ -59,70 +60,3 @@ class MainScreenBody extends StatelessWidget {
         )));
   }
 }
-
-class SideMenu extends StatefulWidget {
-  @override
-  SideMenuState createState() => new SideMenuState();
-}
-
-class SideMenuState extends State<SideMenu> {
-  @override
-  Widget build(BuildContext context) {
-    return new Drawer(
-      child: Center(
-        child: ListView(
-          children: <Widget>[
-            new UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: Colors.white),
-              currentAccountPicture: new CircleAvatar(
-                radius: 50.0,
-                backgroundColor: const Color(0xFF778899),
-                backgroundImage:
-                    NetworkImage("http://tineye.com/images/widgets/mona.jpg"),
-              ),
-              accountName: Text("Tan Ah Kow"),
-              accountEmail: Text("")
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color(0x626B8C),
-                currentAccountPicture: CircleAvatar(radius: 50, backgroundImage: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SNice.svg/1200px-SNice.svg.png"),)
-              ),
-              child: Text('Tan Ah Kow'),
-            ),
-            ListTile(
-              title: const Text('Item 1'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Item 2'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
