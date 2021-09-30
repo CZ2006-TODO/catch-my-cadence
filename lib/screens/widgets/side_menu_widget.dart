@@ -7,11 +7,14 @@ import 'package:flutter/material.dart';
 class SideMenu extends StatelessWidget {
   const SideMenu({Key? key}) : super(key: key);
 
-  //build sidemenu in the order below
+  //SideMenu
   @override
   Widget build(BuildContext context) {
+    //return a drawer containing a ListView containg multiple
+    //widgets to allow users to scroll up and down should it be required
     return Drawer(
       child: ListView(padding: EdgeInsets.zero, children: <Widget>[
+        //SideMenu built in this order
         _drawerHeader(),
         _homeOption(context),
         _activityHistoryOption(context),
@@ -22,7 +25,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //build the drawer header
+  //DrawerHeader: Contains the user's name, email, and avatar
   UserAccountsDrawerHeader _drawerHeader() {
     return UserAccountsDrawerHeader(
       accountName: Text(
@@ -38,7 +41,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //Home
+  //Home: Routes the user back to MainScreen
   ListTile _homeOption(BuildContext context) {
     return ListTile(
         title: Text(
@@ -49,12 +52,13 @@ class SideMenu extends StatelessWidget {
         ),
         onTap: () {
           //routes back to MainScreen on tap
+          //pops all screens from view stack until main screen is at the top of the stack
           Navigator.of(context)
               .popUntil(ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
         });
   }
 
-  //ActivityHistory
+  //ActivityHistory: Routes the user to ActivityHistoryScreen
   ListTile _activityHistoryOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -69,7 +73,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //About
+  //About: Routes the user to AboutScreen to learn more about the app
   ListTile _aboutOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -84,7 +88,8 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //Help
+  //Help: Routes the user to HelpScreen where they can access website(if applicable)
+  //or seek assisstance
   ListTile _helpOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -99,7 +104,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //Settings
+  //Settings: Routes user to SettingsScreen
   ListTile _settingsOption(BuildContext context) {
     return ListTile(
       title: Text(
