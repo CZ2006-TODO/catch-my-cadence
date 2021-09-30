@@ -19,6 +19,7 @@ information.
 1. Add misc. screens (AboutScreen, HelpScreen etc.)
 2. Add functionality to SpotifyControllerModel
 3. Data links and communication between models (hard).
+4. Unit testing.
 
 ## General Guidelines
 1. Try to `flutter pub upgrade` before you commit to keep your dependencies and those in the repo
