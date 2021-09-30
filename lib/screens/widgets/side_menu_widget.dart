@@ -13,13 +13,9 @@ class SideMenu extends StatelessWidget {
       child: ListView(padding: EdgeInsets.zero, children: <Widget>[
         _buildDrawerHeader(context),
         _buildCMCItem(context),
-        Divider(),
         _buildAHItem(context),
-        Divider(),
         _buildInfoItem(context),
-        Divider(),
         _buildHelpItem(context),
-        Divider(),
         _buildSettingsItem(context),
       ]),
     );
