@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class SideMenu extends StatelessWidget {
   const SideMenu({Key? key}) : super(key: key);
 
+  //build sidemenu in the order below
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -21,6 +22,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
+  //build the drawer header
   UserAccountsDrawerHeader _drawerHeader() {
     return UserAccountsDrawerHeader(
       accountName: Text(
@@ -36,6 +38,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
+  //Home
   ListTile _homeOption(BuildContext context) {
     return ListTile(
         title: Text(
@@ -45,11 +48,13 @@ class SideMenu extends StatelessWidget {
           Icons.home,
         ),
         onTap: () {
+          //routes back to MainScreen on tap
           Navigator.of(context)
               .popUntil(ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
         });
   }
 
+  //ActivityHistory
   ListTile _activityHistoryOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -59,11 +64,12 @@ class SideMenu extends StatelessWidget {
         Icons.history,
       ),
       // onTap:(){
-      // TODO: Link to relevant screens
+      // TODO: Link to ActivityHistory screen
       // }
     );
   }
 
+  //About
   ListTile _aboutOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -73,11 +79,12 @@ class SideMenu extends StatelessWidget {
         Icons.info,
       ),
       // onTap:(){
-      // TODO: Link to relevant screens
+      // TODO: Link to About screen
       // }
     );
   }
 
+  //Help
   ListTile _helpOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -87,11 +94,12 @@ class SideMenu extends StatelessWidget {
         Icons.help,
       ),
       // onTap:(){
-      // TODO: Link to relevant screens
+      // TODO: Link to Help screen
       // }
     );
   }
 
+  //Settings
   ListTile _settingsOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -101,7 +109,7 @@ class SideMenu extends StatelessWidget {
         Icons.settings,
       ),
       // onTap:(){
-      // TODO: Link to relevant screens
+      // TODO: Link to settings screen
       // }
     );
   }
