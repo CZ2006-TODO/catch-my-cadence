@@ -1,7 +1,6 @@
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
-import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
@@ -39,7 +38,7 @@ class MainScreenBody extends StatelessWidget {
           // If required, the interaction between the 2 will change.
           // Right now, I can foresee a need for a proxy provider for communication
           // between GetSongBPMModel and SpotifyControllerModel
-          Provider(create: (ctx) => GetSongBPMModel()),
+          Provider(create: (ctx) => GetSongBpmModel()),
           // lazy is set to false because usually models are not created until
           // they are needed, but we want to connect the moment user enters the
           // main screen.
@@ -58,7 +57,7 @@ class MainScreenBody extends StatelessWidget {
                     cadenceActive: cadped.isActive,
                     steps: cadped.steps,
                     cadence: cadped.cadence,
-                  ),
+                  )
                 ]);
           },
         )));
