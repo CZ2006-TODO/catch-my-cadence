@@ -23,7 +23,7 @@ class CadencePedometerModel extends ChangeNotifier {
     setUpStepCountStream();
   }
 
-  // initState : Initialise the starting state for the model.
+  // resetState : Initialise the starting state for the model.
   // This includes setting up the required attributes and streams.
   void resetState() {
     _numSteps = _currentCadence = _startTime = 0;
