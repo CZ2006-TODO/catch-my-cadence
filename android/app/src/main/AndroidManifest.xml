@@ -2,17 +2,12 @@
     package="com.todo.catch_my_cadence">
     <!-- Required to use the accelerometer in the phone. -->
 <<<<<<< HEAD
-<<<<<<< HEAD
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- Required to fetch data from the internet. -->
 =======
    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
    <!-- Required to fetch data from the internet. -->
 >>>>>>> 0ab5160 (feat: Add get song bpm model)
-=======
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-    <!-- Required to fetch data from the internet. -->
->>>>>>> 2dd44de (update `secrets.env.example` fields)
     <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="Catch My Cadence"
