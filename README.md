@@ -17,7 +17,7 @@ information.
 
 ## TODO list
 1. Add misc. screens (AboutScreen, HelpScreen etc.)
-2. Add SpotidyControllerModel
+2. Add functionality to SpotifyControllerModel
 3. Data links and communication between models (hard).
 
 ## General Guidelines
