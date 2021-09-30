@@ -56,7 +56,7 @@ class MainScreenBody extends StatelessWidget {
                     cadenceActive: cadped.isActive,
                     steps: cadped.steps,
                     cadence: cadped.cadence,
-                  ),
+                  )
                 ]);
           },
         )));
