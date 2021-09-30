@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 // SideMenu is the side menu for the application.
 // This side menu contains options to go to other different screens
 // such as the HelpScreen or the AboutScreen.
+// The selected screens DO NOT replace the current screen.
+// Instead, they should be pushed ON TOP of the current screen where applicable.
 class SideMenu extends StatelessWidget {
   const SideMenu({Key? key}) : super(key: key);
 
-  //SideMenu
   @override
   Widget build(BuildContext context) {
-    //return a drawer containing a ListView containg multiple
-    //widgets to allow users to scroll up and down should it be required
+    // Returns a drawer containing a ListView containing multiple miscellaneous
+    // widgets (options).
+    // Using a ListView allows users to scroll up and down should it be required.
     return Drawer(
       child: ListView(padding: EdgeInsets.zero, children: <Widget>[
-        //SideMenu built in this order
+        // The menu follows this order.
         _drawerHeader(),
         _homeOption(context),
         _activityHistoryOption(context),
@@ -25,7 +27,9 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //DrawerHeader: Contains the user's name, email, and avatar
+  // _drawerHeader : Contains the user's name, email, and avatar
+  // TODO: Might not be possible to get such info using the provided SDK,
+  // so might need to change to show other information.
   UserAccountsDrawerHeader _drawerHeader() {
     return UserAccountsDrawerHeader(
       accountName: Text(
@@ -41,7 +45,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //Home: Routes the user back to MainScreen
+  // _homeOption: Routes the user back to MainScreen.
   ListTile _homeOption(BuildContext context) {
     return ListTile(
         title: Text(
@@ -51,14 +55,13 @@ class SideMenu extends StatelessWidget {
           Icons.home,
         ),
         onTap: () {
-          //routes back to MainScreen on tap
-          //pops all screens from view stack until main screen is at the top of the stack
+          // Pops all screens from view stack until main screen is at the top of the stack.
           Navigator.of(context)
               .popUntil(ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
         });
   }
 
-  //ActivityHistory: Routes the user to ActivityHistoryScreen
+  // _activityHistoryOption : Routes the user to ActivityHistoryScreen.
   ListTile _activityHistoryOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -73,7 +76,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //About: Routes the user to AboutScreen to learn more about the app
+  // _aboutOption : Routes the user to AboutScreen to learn more about the app.
   ListTile _aboutOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -88,8 +91,8 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //Help: Routes the user to HelpScreen where they can access website(if applicable)
-  //or seek assisstance
+  // _helpOption: Routes the user to HelpScreen where they can access
+  // website(if applicable) or seek assistance.
   ListTile _helpOption(BuildContext context) {
     return ListTile(
       title: Text(
@@ -104,7 +107,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  //Settings: Routes user to SettingsScreen
+  // _settingsOption : Routes user to SettingsScreen.
   ListTile _settingsOption(BuildContext context) {
     return ListTile(
       title: Text(
