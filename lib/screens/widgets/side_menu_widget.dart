@@ -11,17 +11,17 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(padding: EdgeInsets.zero, children: <Widget>[
-        _buildDrawerHeader(context),
-        _buildCMCItem(context),
-        _buildAHItem(context),
-        _buildInfoItem(context),
-        _buildHelpItem(context),
-        _buildSettingsItem(context),
+        _drawerHeader(),
+        _homeOption(context),
+        _activityHistoryOption(context),
+        _aboutOption(context),
+        _helpOption(context),
+        _settingsOption(context),
       ]),
     );
   }
 
-  UserAccountsDrawerHeader _buildDrawerHeader(BuildContext context) {
+  UserAccountsDrawerHeader _drawerHeader() {
     return UserAccountsDrawerHeader(
       accountName: Text(
         'Tan Ah Kow',
@@ -36,7 +36,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  ListTile _buildCMCItem(BuildContext context) {
+  ListTile _homeOption(BuildContext context) {
     return ListTile(
         title: Text(
           'Home',
@@ -50,7 +50,7 @@ class SideMenu extends StatelessWidget {
         });
   }
 
-  ListTile _buildAHItem(BuildContext context) {
+  ListTile _activityHistoryOption(BuildContext context) {
     return ListTile(
       title: Text(
         'Activity History',
@@ -64,10 +64,10 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  ListTile _buildInfoItem(BuildContext context) {
+  ListTile _aboutOption(BuildContext context) {
     return ListTile(
       title: Text(
-        'About this App',
+        'About',
       ),
       leading: Icon(
         Icons.info,
@@ -78,7 +78,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  ListTile _buildHelpItem(BuildContext context) {
+  ListTile _helpOption(BuildContext context) {
     return ListTile(
       title: Text(
         'Help',
@@ -92,7 +92,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  ListTile _buildSettingsItem(BuildContext context) {
+  ListTile _settingsOption(BuildContext context) {
     return ListTile(
       title: Text(
         'Settings',

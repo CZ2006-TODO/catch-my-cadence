@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 // with Spotify.
 // This screen also contains many other widgets such as the CadencePedometerWidget.
 class MainScreen extends StatelessWidget {
-  const MainScreen({Key? key}): super(key: key);
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext ctx) {
