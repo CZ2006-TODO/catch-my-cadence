@@ -9,53 +9,44 @@ class SideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-        data: Theme.of(context)
-            .copyWith(canvasColor: Colors.black.withOpacity(0.8)),
-        child: Drawer(
-          child: ListView(padding: EdgeInsets.zero, children: <Widget>[
-            _buildDrawerHeader(context),
-            _buildCMCItem(context),
-            Divider(),
-            _buildAHItem(context),
-            Divider(),
-            _buildInfoItem(context),
-            Divider(),
-            _buildHelpItem(context),
-            Divider(),
-            _buildSettingsItem(context),
-          ]),
-        ));
+    return Drawer(
+      child: ListView(padding: EdgeInsets.zero, children: <Widget>[
+        _buildDrawerHeader(context),
+        _buildCMCItem(context),
+        Divider(),
+        _buildAHItem(context),
+        Divider(),
+        _buildInfoItem(context),
+        Divider(),
+        _buildHelpItem(context),
+        Divider(),
+        _buildSettingsItem(context),
+      ]),
+    );
   }
 
   UserAccountsDrawerHeader _buildDrawerHeader(BuildContext context) {
     return UserAccountsDrawerHeader(
-        accountName: Text(
-          'Tan Ah Kow',
-          style: TextStyle(backgroundColor: Color(0xFF778899).withOpacity(0.8)),
-        ),
-        accountEmail: Text(
-          'tanahkow@gmail.com',
-          style: TextStyle(backgroundColor: Color(0xFF778899).withOpacity(0.8)),
-        ),
-        currentAccountPicture: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          child: Image.asset("assets/images/splash_screen.png"),
-        ),
-        decoration: BoxDecoration(
-          color: Color(0xFF778899).withOpacity(0.8),
-        ));
+      accountName: Text(
+        'Tan Ah Kow',
+      ),
+      accountEmail: Text(
+        'tanahkow@gmail.com',
+      ),
+      currentAccountPicture: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        child: Image.asset("assets/images/splash_screen.png"),
+      ),
+    );
   }
 
   ListTile _buildCMCItem(BuildContext context) {
     return ListTile(
         title: Text(
           'Home',
-          style: TextStyle(color: Colors.white),
         ),
         leading: Icon(
           Icons.home,
-          color: Colors.white,
         ),
         onTap: () {
           Navigator.of(context)
@@ -67,11 +58,9 @@ class SideMenu extends StatelessWidget {
     return ListTile(
       title: Text(
         'Activity History',
-        style: TextStyle(color: Colors.white),
       ),
       leading: Icon(
         Icons.history,
-        color: Colors.white,
       ),
       // onTap:(){
       // TODO: Link to relevant screens
@@ -83,11 +72,9 @@ class SideMenu extends StatelessWidget {
     return ListTile(
       title: Text(
         'About this App',
-        style: TextStyle(color: Colors.white),
       ),
       leading: Icon(
         Icons.info,
-        color: Colors.white,
       ),
       // onTap:(){
       // TODO: Link to relevant screens
@@ -99,11 +86,9 @@ class SideMenu extends StatelessWidget {
     return ListTile(
       title: Text(
         'Help',
-        style: TextStyle(color: Colors.white),
       ),
       leading: Icon(
         Icons.help,
-        color: Colors.white,
       ),
       // onTap:(){
       // TODO: Link to relevant screens
@@ -115,11 +100,9 @@ class SideMenu extends StatelessWidget {
     return ListTile(
       title: Text(
         'Settings',
-        style: TextStyle(color: Colors.white),
       ),
       leading: Icon(
         Icons.settings,
-        color: Colors.white,
       ),
       // onTap:(){
       // TODO: Link to relevant screens
