@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 // This screen contains the logic of checking the user authentication,
 // and then routing the user to the appropriate screen.
 class LoadingScreen extends StatefulWidget {
-  LoadingScreen({Key? key}) : super(key: key);
+  const LoadingScreen({Key? key}) : super(key: key);
 
   @override
   LoadingScreenState createState() => LoadingScreenState();

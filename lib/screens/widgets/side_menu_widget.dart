@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:catch_my_cadence/screens/main_screen.dart';
+import 'package:flutter/material.dart';
 
 // SideMenu is the side menu for the application.
 // This side menu contains options to go to other different screens

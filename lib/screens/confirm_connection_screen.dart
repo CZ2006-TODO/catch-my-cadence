@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 // Spotify app. This is done through directly opening the Spotify app, or
 // by opening a fallback WebView to log in.
 class ConfirmConnectionScreen extends StatelessWidget {
-  ConfirmConnectionScreen({Key? key}) : super(key: key);
+  const ConfirmConnectionScreen({Key? key}) : super(key: key);
 
   // confirmSpotifyLinkage : This function sets the first run flag to false
   // and then directs user to the main screen.
