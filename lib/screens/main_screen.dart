@@ -1,7 +1,6 @@
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
-import 'package:catch_my_cadence/screens/dialogs.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
