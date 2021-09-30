@@ -31,7 +31,7 @@ class SideMenu extends StatelessWidget {
       ),
       currentAccountPicture: CircleAvatar(
         backgroundColor: Colors.transparent,
-        child: Image.asset("assets/images/splash_screen.png"),
+        child: Image.asset("assets/images/Spotify_Icon_RGB_Green.png"),
       ),
     );
   }
