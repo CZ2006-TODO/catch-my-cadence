@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:catch_my_cadence/screens/main_screen.dart';
 
+// SideMenu is the side menu for the application.
+// This side menu contains options to go to other different screens
+// such as the HelpScreen or the AboutScreen.
 class SideMenu extends StatelessWidget {
   const SideMenu({Key? key}) : super(key: key);
 

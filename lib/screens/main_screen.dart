@@ -16,8 +16,8 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Main Screen"),
       ),
-      body: MainScreenBody(),
       drawer: SideMenu(),
+      body: MainScreenBody(),
     );
   }
 }
