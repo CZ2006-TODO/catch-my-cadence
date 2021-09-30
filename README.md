@@ -9,20 +9,17 @@ Minimal steps to run this application.
 
 ```cmd
 $ flutter pub get
+$ flutter pub upgrade
 ```
 
 3. Set up your `/assets/secrets.env` file. You may look at the example `.env` file provided for more
 information.
 
-## Implementation Details
-The following have been implemented so far:
-1. Login Flow
-   - `loading_screen.dart` checks if the user has logged in before.
-   - `login_screen.dart` does authentication.
-   - `main_screen.dart` does connection to Spotify App.
-2. Navigator to help navigate between pages (look at `routes.dart` for more details)
-3. Splash screen (kinda)
-
 ## TODO list
-Some of the things and thoughts I had while implementing the above:
-1. Everything has been addressed! (so far)
+1. Add misc. screens (AboutScreen, HelpScreen etc.)
+2. Add SpotidyControllerModel
+3. Data links and communication between models (hard).
+
+## General Guidelines
+1. Try to `flutter pub upgrade` before you commit to keep your dependencies and those in the repo
+up to date.
