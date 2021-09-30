@@ -5,18 +5,24 @@ import 'package:flutter/material.dart';
 
 // RouteDelegator helps to navigate the different screens of the app.
 class RouteDelegator {
-  static const String LOADING_SCREEN_ROUTE = '/';
+  static const String LOADING_SCREEN_ROUTE = '/loading';
   static const String MAIN_SCREEN_ROUTE = '/main';
-  static const String CONFIRM_CONNECTION_SCREEN_ROUTE = '/connect';
+  static const String CONFIRM_CONNECTION_SCREEN_ROUTE = '/confirm_connect';
 
   static Route<dynamic> delegateRoute(RouteSettings settings) {
     switch (settings.name) {
       case LOADING_SCREEN_ROUTE: // Loading screen
-        return MaterialPageRoute(builder: (ctx) => LoadingScreen());
+        return MaterialPageRoute(
+            settings: RouteSettings(name: LOADING_SCREEN_ROUTE),
+            builder: (ctx) => LoadingScreen());
       case MAIN_SCREEN_ROUTE: // Main screen
-        return MaterialPageRoute(builder: (ctx) => MainScreen());
+        return MaterialPageRoute(
+            settings: RouteSettings(name: MAIN_SCREEN_ROUTE),
+            builder: (ctx) => MainScreen());
       case CONFIRM_CONNECTION_SCREEN_ROUTE: // Confirm connection screen
-        return MaterialPageRoute(builder: (ctx) => ConfirmConnectionScreen());
+        return MaterialPageRoute(
+            settings: RouteSettings(name: CONFIRM_CONNECTION_SCREEN_ROUTE),
+            builder: (ctx) => ConfirmConnectionScreen());
       default: // Unexpected error screen
         return MaterialPageRoute(
             builder: (ctx) => Scaffold(body: Center(child: Text("Error!"))));

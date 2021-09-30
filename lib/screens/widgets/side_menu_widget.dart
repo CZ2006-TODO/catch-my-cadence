@@ -1,4 +1,4 @@
-import 'package:catch_my_cadence/screens/main_screen.dart';
+import 'package:catch_my_cadence/routes.dart';
 import 'package:flutter/material.dart';
 
 // SideMenu is the side menu for the application.
@@ -58,10 +58,8 @@ class SideMenu extends StatelessWidget {
           color: Colors.white,
         ),
         onTap: () {
-          Navigator.of(context).pop();
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => MainScreen()),
-          );
+          Navigator.of(context)
+              .popUntil(ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
         });
   }
 
