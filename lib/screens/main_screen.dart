@@ -44,18 +44,18 @@ class MainScreenBody extends StatelessWidget {
           Provider(create: (ctx) => SpotifyControllerModel(ctx), lazy: false),
         ],
         child: Center(child: Consumer<CadencePedometerModel>(
-          builder: (context, cadped, child) {
+          builder: (context, cpModel, child) {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   ElevatedButton(
-                    child: Text(cadped.isActive ? "Stop" : "Start"),
-                    onPressed: () => cadped.toggleStatus(),
+                    child: Text(cpModel.isActive ? "Stop" : "Start"),
+                    onPressed: () => cpModel.toggleStatus(),
                   ),
                   CadencePedometerWidget(
-                    cadenceActive: cadped.isActive,
-                    steps: cadped.steps,
-                    cadence: cadped.cadence,
+                    cadenceActive: cpModel.isActive,
+                    steps: cpModel.steps,
+                    cadence: cpModel.cadence,
                   )
                 ]);
           },
