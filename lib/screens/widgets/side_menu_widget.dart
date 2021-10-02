@@ -55,7 +55,7 @@ class SideMenu extends StatelessWidget {
           Icons.home,
         ),
         onTap: () {
-          // Pops all screens from view stack until main screen is at the top of the stack.
+          // Pops all screens from view stack until MainScreen is at the top of the stack.
           Navigator.of(context)
               .popUntil(ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
         });
@@ -79,16 +79,17 @@ class SideMenu extends StatelessWidget {
   // _aboutOption : Routes the user to AboutScreen to learn more about the app.
   ListTile _aboutOption(BuildContext context) {
     return ListTile(
-      title: Text(
-        'About',
-      ),
-      leading: Icon(
-        Icons.info,
-      ),
-      // onTap:(){
-      // TODO: Link to About screen
-      // }
-    );
+        title: Text(
+          'About',
+        ),
+        leading: Icon(
+          Icons.info,
+        ),
+        onTap: () {
+          // Pops all screens from view stack until AboutScreen is at the top of the stack.
+          Navigator.of(context)
+              .popUntil(ModalRoute.withName(RouteDelegator.ABOUT_SCREEN_ROUTE));
+        });
   }
 
   // _helpOption: Routes the user to HelpScreen where they can access
