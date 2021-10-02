@@ -88,7 +88,7 @@ class SideMenu extends StatelessWidget {
         onTap: () {
           // Pops all screens from view stack until AboutScreen is at the top of the stack.
           Navigator.of(context)
-              .popUntil(ModalRoute.withName(RouteDelegator.ABOUT_SCREEN_ROUTE));
+              .popAndPushNamed(RouteDelegator.ABOUT_SCREEN_ROUTE);
         });
   }
 

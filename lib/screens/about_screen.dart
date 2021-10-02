@@ -1,3 +1,4 @@
+import 'package:catch_my_cadence/routes.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -7,14 +8,18 @@ import 'package:flutter/material.dart';
 class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("About Screen"),
-        ),
-        drawer: SideMenu(),
-        body: AboutScreenBody(),
+    return Scaffold(
+      appBar: AppBar(
+        //back arrow that returns to MainScreen
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(ctx).popUntil(
+                  ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
+            },
+            icon: Icon(Icons.arrow_back)),
+        title: Text("About Screen"),
       ),
+      body: AboutScreenBody(),
     );
   }
 }
