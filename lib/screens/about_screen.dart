@@ -1,20 +1,16 @@
-import 'package:catch_my_cadence/routes.dart';
-import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 
-//AboutScreen introduces the user to the app
-//Screen is accessible via side menu
-
+// AboutScreen provides basic information about the application.
+// It is accessible via side menu options.
 class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(
-        //back arrow that returns to MainScreen
+        // Back arrow that returns to MainScreen
         leading: IconButton(
             onPressed: () {
-              Navigator.of(ctx).popUntil(
-                  ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
+              Navigator.of(ctx).pop();
             },
             icon: Icon(Icons.arrow_back)),
         title: Text("About Screen"),
@@ -27,7 +23,6 @@ class AboutScreen extends StatelessWidget {
 class AboutScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    // creates a column containing a text container and an image
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -40,7 +35,6 @@ class AboutScreenBody extends StatelessWidget {
               width: 350,
               child: Text(
                 "Catch My Cadence is an application developed by a group of NTU students who seek to better integrate music into our exercises. The application tracks your cadence during your run, and then finds a song from Spotify that matches your cadence. We believe that this will make our runs much more enjoyable. Stay safe, and have a good run!",
-                style: Theme.of(ctx).textTheme.bodyText1,
                 textAlign: TextAlign.center,
               )),
         ),
@@ -50,7 +44,7 @@ class AboutScreenBody extends StatelessWidget {
           child: Opacity(
             opacity: 0.5,
             child: Image.asset(
-              "assets/images/spash_screen_without_words.png",
+              "assets/images/splash_screen_without_words.png",
               fit: BoxFit.cover,
             ),
           ),
