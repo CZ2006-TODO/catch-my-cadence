@@ -29,10 +29,10 @@ class Config {
     return prefs.getBool(_firstRunFlag) ?? true;
   }
 
-  // setFirstRunFlag : Sets the first run flag to false
-  static Future<void> setFirstRunFlag() async {
+  // setFirstRunFlag : Sets the first run flag to required value.
+  static Future<void> setFirstRunFlag(bool flag) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(_firstRunFlag, false);
+    prefs.setBool(_firstRunFlag, flag);
   }
 
   // loadSecrets : Attempts to load the client ID and redirect URI associated
