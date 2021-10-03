@@ -12,10 +12,10 @@ class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
 
   @override
-  LoadingScreenState createState() => LoadingScreenState();
+  _LoadingScreenState createState() => _LoadingScreenState();
 }
 
-class LoadingScreenState extends State<LoadingScreen>
+class _LoadingScreenState extends State<LoadingScreen>
     with WidgetsBindingObserver {
   // asyncLoad : Asynchronously load up the application.
   // This function contains logic for routing the user to the appropriate

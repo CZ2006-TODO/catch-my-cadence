@@ -19,29 +19,42 @@ class MainScreen extends StatelessWidget {
         title: Text("Main Screen"),
       ),
       drawer: SideMenu(),
-      body: MainScreenBody(),
+      body: _MainScreenBody(),
     );
   }
 }
 
-// MainScreenBody is the widget that acts as the main body of the main screen.
-// This widget contains the CadencePedometerModel.
-class MainScreenBody extends StatelessWidget {
+// _MainScreenBody is the widget that acts as the main body of the main screen.
+// This widget contains all the necessary data models.
+class _MainScreenBody extends StatefulWidget {
+  const _MainScreenBody({Key? key}) : super(key: key);
+
+  @override
+  _MainScreenBodyState createState() => _MainScreenBodyState();
+}
+
+class _MainScreenBodyState extends State<_MainScreenBody> {
+  late CadencePedometerModel _cadenceModel;
+  late GetSongBPMModel _bpmModel;
+  late SpotifyControllerModel _spotifyModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _cadenceModel = CadencePedometerModel();
+    _bpmModel = GetSongBPMModel();
+    _spotifyModel = SpotifyControllerModel(context);
+  }
+
   @override
   Widget build(BuildContext ctx) {
     // Allows to hold multiple models.
     return MultiProvider(
+        // TODO : The interaction between models has not been finalised.
         providers: [
-          ChangeNotifierProvider(create: (_) => CadencePedometerModel()),
-
-          // If required, the interaction between the 2 will change.
-          // Right now, I can foresee a need for a proxy provider for communication
-          // between GetSongBPMModel and SpotifyControllerModel
-          Provider(create: (ctx) => GetSongBPMModel()),
-          // lazy is set to false because usually models are not created until
-          // they are needed, but we want to connect the moment user enters the
-          // main screen.
-          Provider(create: (ctx) => SpotifyControllerModel(ctx), lazy: false),
+          ChangeNotifierProvider(create: (_) => _cadenceModel),
+          Provider(create: (ctx) => _bpmModel),
+          Provider(create: (ctx) => _spotifyModel),
         ],
         child: Center(child: Consumer<CadencePedometerModel>(
           builder: (context, cpModel, child) {

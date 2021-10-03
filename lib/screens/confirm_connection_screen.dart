@@ -24,7 +24,7 @@ class ConfirmConnectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-        appBar: AppBar(title: Text("Login Screen")),
+        appBar: AppBar(title: Text("Confirm Connection Screen")),
         body: Center(
             child: ElevatedButton(
           child: Text("Connect to Spotify"),

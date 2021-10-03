@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/config.dart';
-import 'package:catch_my_cadence/screens/dialogs.dart';
+import 'package:catch_my_cadence/screens/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
