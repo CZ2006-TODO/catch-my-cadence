@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:catch_my_cadence/screens/about_screen.dart';
 import 'package:catch_my_cadence/screens/confirm_connection_screen.dart';
 import 'package:catch_my_cadence/screens/loading_screen.dart';
 import 'package:catch_my_cadence/screens/main_screen.dart';
@@ -10,6 +11,7 @@ class RouteDelegator {
   static const String LOADING_SCREEN_ROUTE = 'loading';
   static const String MAIN_SCREEN_ROUTE = 'main';
   static const String CONFIRM_CONNECTION_SCREEN_ROUTE = 'confirm_connect';
+  static const String ABOUT_SCREEN_ROUTE = 'about';
 
   static Route<dynamic> delegateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -28,6 +30,11 @@ class RouteDelegator {
         return MaterialPageRoute(
             settings: RouteSettings(name: CONFIRM_CONNECTION_SCREEN_ROUTE),
             builder: (ctx) => ConfirmConnectionScreen());
+      case ABOUT_SCREEN_ROUTE: // About screen
+        log("Pushing AboutScreen...");
+        return MaterialPageRoute(
+            settings: RouteSettings(name: ABOUT_SCREEN_ROUTE),
+            builder: (ctx) => AboutScreen());
       default: // Unexpected error screen
         log("Pushing ErrorScreen...");
         return MaterialPageRoute(

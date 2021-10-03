@@ -15,7 +15,7 @@ class ConfirmConnectionScreen extends StatelessWidget {
   Future<void> confirmSpotifyLinkage(BuildContext ctx) async {
     // Set first run flag to false.
     log("Setting first run flag to false...");
-    await Config.setFirstRunFlag();
+    await Config.setFirstRunFlag(false);
 
     // Navigate to main screen.
     Navigator.of(ctx).pushReplacementNamed(RouteDelegator.MAIN_SCREEN_ROUTE);
@@ -24,7 +24,7 @@ class ConfirmConnectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-        appBar: AppBar(title: Text("Login Screen")),
+        appBar: AppBar(title: Text("Confirm Connection Screen")),
         body: Center(
             child: ElevatedButton(
           child: Text("Connect to Spotify"),
