@@ -55,7 +55,7 @@ class SpotifyControllerModel {
               "Please check and come back!";
       showDialog(
         context: ctx,
-        builder: (_) => FatalErrorDialog(message: message),
+        builder: (_) => FatalErrorDialog(title: "Uh oh!", message: message),
       );
     }
   }

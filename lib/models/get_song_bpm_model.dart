@@ -9,22 +9,23 @@ class GetSongBPMModel {
   static const _baseAPI = "api.getsongbpm.com";
   static const _tempoPath = "/tempo/";
 
+  static const _headers = {
+    'Content-type': 'application/json',
+    'Accept': 'application/json',
+  };
+
   // getSongs: Returns a list of songs with a given BPM.
-  static Future<List<Song>> getSongs(int bpm) async {
+  Future<List<TempoSong>> getSongs(int bpm) async {
     final queryParams = {
       "api_key": Config.getSongBpmApiKey,
       "bpm": bpm.toString(),
     };
-    final headers = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-    };
     final uri = Uri.https(_baseAPI, _tempoPath, queryParams);
-    final response = await http.get(uri, headers: headers);
+    final response = await http.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
       var songListJson = jsonDecode(response.body)["tempo"] as List;
-      List<Song> songs = songListJson.map((s) => Song.fromJson(s)).toList();
+      List<TempoSong> songs = songListJson.map((s) => TempoSong.fromJson(s)).toList();
       return songs;
     } else {
       throw Exception("Failed to fetch songs from getSongBPM API");
@@ -32,8 +33,8 @@ class GetSongBPMModel {
   }
 }
 
-// Song class contains information of a song returned from the GetSongBPM API.
-class Song {
+// TempoSong class contains information of a song returned from the GetSongBPM API.
+class TempoSong {
   String songId;
   String songTitle;
   String songUri;
@@ -41,11 +42,11 @@ class Song {
   Artist artist;
   Album album;
 
-  Song(this.songId, this.songTitle, this.songUri, this.tempo, this.artist,
+  TempoSong(this.songId, this.songTitle, this.songUri, this.tempo, this.artist,
       this.album);
 
-  factory Song.fromJson(Map<String, dynamic> json) {
-    return Song(
+  factory TempoSong.fromJson(Map<String, dynamic> json) {
+    return TempoSong(
         json['song_id'] ?? '',
         json['song_title'] ?? '',
         json['song_uri'] ?? '',

@@ -52,9 +52,9 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
     return MultiProvider(
         // TODO : The interaction between models has not been finalised.
         providers: [
-          ChangeNotifierProvider(create: (_) => _cadenceModel),
-          Provider(create: (ctx) => _bpmModel),
-          Provider(create: (ctx) => _spotifyModel),
+          ChangeNotifierProvider.value(value: _cadenceModel),
+          Provider.value(value: _bpmModel),
+          Provider.value(value: _spotifyModel),
         ],
         child: Center(child: Consumer<CadencePedometerModel>(
           builder: (context, cpModel, child) {
