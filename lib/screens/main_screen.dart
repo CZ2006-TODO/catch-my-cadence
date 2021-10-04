@@ -41,9 +41,9 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   @override
   void initState() {
     super.initState();
+    _spotifyModel = SpotifyControllerModel(context);
     _cadenceModel = CadencePedometerModel();
     _bpmModel = GetSongBPMModel();
-    _spotifyModel = SpotifyControllerModel(context);
   }
 
   @override
