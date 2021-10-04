@@ -24,16 +24,14 @@ class CadencePedometerModel with ChangeNotifier {
     // Initialise the starting state for the model.
     _setInactiveState();
 
-    // _timer not set up as initially, cadence is ot calculated.
+    // _timer not set up as initially, cadence is not calculated.
     _setUpCountStream();
   }
 
   // _setUpCountStream : Sets up streams for pedometer data.
-  // https://www.all8.com/tools/bpm.htm
-  // Quite accurate for calculating cadence, trying to replicate.
   void _setUpCountStream() {
     // This step stream adds one to the current step count when
-    // calculation is active.
+    // calculation is active, then notifies.
     _stepCountStream = Pedometer.stepCountStream;
     _stepCountStream.listen((StepCount event) {
       if (_isActive) {
