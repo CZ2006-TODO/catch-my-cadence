@@ -3,8 +3,6 @@
     <!-- Required to use the accelerometer in the phone. -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- Required to fetch data from the internet. -->
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-    <!-- Required to fetch data from the internet. -->
     <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="Catch My Cadence"
