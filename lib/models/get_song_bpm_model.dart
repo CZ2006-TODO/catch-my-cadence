@@ -25,7 +25,8 @@ class GetSongBPMModel {
 
     if (response.statusCode == 200) {
       var songListJson = jsonDecode(response.body)["tempo"] as List;
-      List<TempoSong> songs = songListJson.map((s) => TempoSong.fromJson(s)).toList();
+      List<TempoSong> songs =
+          songListJson.map((s) => TempoSong.fromJson(s)).toList();
       return songs;
     } else {
       throw Exception("Failed to fetch songs from getSongBPM API");
