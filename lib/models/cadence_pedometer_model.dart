@@ -14,7 +14,7 @@ class CadencePedometerModel with ChangeNotifier {
   // Data streams
   ListQueue<int> _cadences = ListQueue(_queueSize); // Holds past cadences.
   late Stream<StepCount> _stepCountStream;
-  late Timer? _timer;
+  Timer? _timer;
 
   late int _numSteps; // Number of steps from start.
   late bool _isActive; // Whether cadence is being calculated
@@ -87,7 +87,7 @@ class CadencePedometerModel with ChangeNotifier {
         if (_cadences.length > _queueSize) {
           _cadences.removeFirst();
         }
-        log(cadence.toString());
+        log("$_cadences -> ${this.cadence}");
         notifyListeners();
       }
     });
