@@ -70,24 +70,22 @@ class CadencePedometerModel with ChangeNotifier {
   void _setUpTimer() {
     // This periodic timer updates the current cadence when calculation is active.
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_isActive) {
-        int timeDifference = DateTime.now().millisecondsSinceEpoch - _startTime;
-        // Needed due to start time error correction.
-        if (timeDifference <= 0) {
-          return;
-        }
-        int cadence = ((_numSteps / timeDifference) *
-                Duration.secondsPerMinute *
-                Duration.millisecondsPerSecond)
-            .round();
-        _cadences.add(cadence);
-        // This ensures only _queueSize elements in the queue.
-        if (_cadences.length > _queueSize) {
-          _cadences.removeFirst();
-        }
-        log("$_cadences -> ${this.cadence}");
-        notifyListeners();
+      int timeDifference = DateTime.now().millisecondsSinceEpoch - _startTime;
+      // Needed due to start time error correction.
+      if (timeDifference <= 0) {
+        return;
       }
+      int cadence = ((_numSteps / timeDifference) *
+              Duration.secondsPerMinute *
+              Duration.millisecondsPerSecond)
+          .round();
+      _cadences.add(cadence);
+      // This ensures only _queueSize elements in the queue.
+      if (_cadences.length > _queueSize) {
+        _cadences.removeFirst();
+      }
+      log("$_cadences -> ${this.cadence}");
+      notifyListeners();
     });
   }
 
