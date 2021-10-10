@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
+import 'package:catch_my_cadence/models/widget_player_model.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
+import 'package:catch_my_cadence/screens/widgets/widget_player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,13 +41,14 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   late CadencePedometerModel _cadenceModel;
   late GetSongBPMModel _bpmModel;
   late SpotifyControllerModel _spotifyModel;
-
+  late WidgetPlayerModel _playerModel;
   @override
   void initState() {
     super.initState();
     _spotifyModel = SpotifyControllerModel(context);
     _cadenceModel = CadencePedometerModel();
     _bpmModel = GetSongBPMModel();
+    _playerModel = WidgetPlayerModel();
   }
 
   @override
@@ -55,23 +60,55 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
           ChangeNotifierProvider.value(value: _cadenceModel),
           Provider.value(value: _bpmModel),
           Provider.value(value: _spotifyModel),
+          ChangeNotifierProvider.value(value: _playerModel),
         ],
-        child: Center(child: Consumer<CadencePedometerModel>(
-          builder: (context, cpModel, child) {
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  ElevatedButton(
-                    child: Text(cpModel.isActive ? "Stop" : "Start"),
-                    onPressed: () => cpModel.toggleStatus(),
-                  ),
-                  CadencePedometerWidget(
-                    cadenceActive: cpModel.isActive,
-                    steps: cpModel.steps,
-                    cadence: cpModel.cadence,
-                  )
-                ]);
-          },
-        )));
+        child: Center(
+            child: Column(children: [
+          Consumer<CadencePedometerModel>(
+            builder: (context, cpModel, child) {
+              if (!_cadenceModel.isActive ||
+                  (_cadenceModel.isActive && _cadenceModel.timeElapsed < 3)) {
+                //Arbitrary X seconds counter to 'assume' BPM has been stabilized
+                //TODO: Change X, X is 3 for now for testing purposes
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      ElevatedButton(
+                        child: Text(cpModel.isActive ? "Stop" : "Start"),
+                        onPressed: () => cpModel.toggleStatus(),
+                      ),
+                      CadencePedometerWidget(
+                        cadenceActive: cpModel.isActive,
+                        steps: cpModel.steps,
+                        cadence: cpModel.cadence,
+                      )
+                    ]);
+              } else {
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      ElevatedButton(
+                        child: Text("Stop Activity"),
+                        onPressed: () =>
+                            cpModel.stop(), //TODO: Full implementation
+                      ),
+                      CadencePedometerWidget(
+                        cadenceActive: cpModel.isActive,
+                        steps: cpModel.steps,
+                        cadence: cpModel.cadence,
+                      ),
+                      Consumer<WidgetPlayerModel>(
+                          builder: (context, spotifyModel, child) {
+                        return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              WidgetSpotifyPlayer(),
+                            ]);
+                      }),
+                    ]);
+              }
+            },
+          ),
+        ])));
   }
 }

@@ -104,6 +104,11 @@ class CadencePedometerModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void stop() {
+    _isActive = true; // set to true first so our toggle will turn it off
+    toggleStatus();
+  }
+
   // Getters
   int get steps {
     return _numSteps;
@@ -116,5 +121,11 @@ class CadencePedometerModel with ChangeNotifier {
 
   bool get isActive {
     return _isActive;
+  }
+
+  int get timeElapsed {
+    var now = DateTime.now().millisecondsSinceEpoch;
+    var diff = now - _startTime;
+    return (diff / 1000).floor(); //return time in seconds floored
   }
 }
