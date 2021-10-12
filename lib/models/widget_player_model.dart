@@ -1,68 +1,80 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
 import 'package:catch_my_cadence/util/AppConstants.dart';
 import 'package:flutter/material.dart';
+import 'package:spotify_sdk/models/player_options.dart';
+import 'package:spotify_sdk/models/player_restrictions.dart';
+import 'package:spotify_sdk/models/player_state.dart';
+import 'package:spotify_sdk/models/player_options.dart' as popt;
 
-class WidgetPlayerModel extends ChangeNotifier {
-  late bool isPlaying = false;
-  late SpotifySong lastSong = new SpotifySong();
-  WidgetPlayerModel() {
-    initState();
+import 'get_song_bpm_model.dart';
+
+class WidgetPlayerControl extends ChangeNotifier {
+  late StreamController controller = StreamController();
+  late StreamSubscription playerStateSubscription;
+  late Stream<PlayerState> playerStateStream;
+  PlayerState playerState = PlayerState(
+      null,
+      1,
+      0,
+      PlayerOptions(popt.RepeatMode.context, isShuffling: false),
+      PlayerRestrictions(
+          canSkipNext: true,
+          canSkipPrevious: true,
+          canRepeatContext: true,
+          canRepeatTrack: true,
+          canSeek: true,
+          canToggleShuffle: true),
+      isPaused: false);
+
+  void updatePlaytime() {
+    if (playerState.track != null && !playerState.isPaused) notifyListeners();
   }
 
-  void initState() async {
-    await SpotifyControllerModel.isPlaying().then((value) {
-      isPlaying = value;
-      notifyListeners();
-    });
-    await SpotifyControllerModel.getLastSong().then((value) {
-      lastSong = value;
-      notifyListeners();
-    });
+  void updatePlayerState(state) {
+    playerState = state;
+    notifyListeners();
   }
 
-  void resume() {
-    _doResume();
-  }
-
-  void _doResume() {
+  static void resume() {
     SpotifyControllerModel.doResume();
-    isPlaying = true;
-    initState();
-    notifyListeners();
   }
 
-  void pause() {
-    _doPause();
-  }
-
-  void _doPause() {
+  static void pause() {
     SpotifyControllerModel.doPause();
-    isPlaying = false;
-    notifyListeners();
   }
 
-  void play(String uri) {
-    _doPlay(uri);
+  static void play(String uri) {
+    SpotifyControllerModel.doPlay(uri);
+  }
+
+  static void playByTitle(String title) async {
+    String? uri = await SpotifyControllerModel.searchTrackByTitle(title);
+    play(uri);
+  }
+
+  void playNext() {}
+
+  static void playByBPM(int bpm) {
+    if (bpm < 60 || bpm > 150) {
+      //TODO: Decide how to handle invalid bpm range, currently generating bpm from arbitrary range
+      var random = new Random();
+      bpm = random.nextInt(90) + 60;
+    }
+    GetSongBPMModel.getSongs(bpm).then((value) {
+      var random = new Random();
+      var title = value[random.nextInt(value.length + 1) - 2].songTitle;
+      //Pick random title from list of results from GetSongBPM API
+      AppConstants.toastShort("Playing " + title);
+      playByTitle(title);
+    });
   }
 
   void playNeverGonna() {
     AppConstants.toastShort(
         "Playing arbitrary song `Never Gonna Give You Up` by title");
     playByTitle("Never Gonna Give You Up");
-  }
-
-  void _doPlay(String uri) {
-    SpotifyControllerModel.doPlay(uri);
-    isPlaying = true;
-    SpotifyControllerModel.getLastSong().then((value) {
-      lastSong = value;
-      notifyListeners();
-    });
-    notifyListeners();
-  }
-
-  Future<void> playByTitle(String title) async {
-    String? uri = await SpotifyControllerModel.searchTrackByTitle(title);
-    if (uri != null) _doPlay(uri);
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
@@ -38,77 +36,68 @@ class _MainScreenBody extends StatefulWidget {
 }
 
 class _MainScreenBodyState extends State<_MainScreenBody> {
-  late CadencePedometerModel _cadenceModel;
-  late GetSongBPMModel _bpmModel;
-  late SpotifyControllerModel _spotifyModel;
-  late WidgetPlayerModel _playerModel;
+  late CadencePedometerModel? _cadenceModel;
+  late GetSongBPMModel? _bpmModel;
+  late SpotifyControllerModel? _spotifyModel;
+  late WidgetPlayerControl? _widgetPlayerModel;
   @override
   void initState() {
     super.initState();
     _spotifyModel = SpotifyControllerModel(context);
     _cadenceModel = CadencePedometerModel();
     _bpmModel = GetSongBPMModel();
-    _playerModel = WidgetPlayerModel();
+    _widgetPlayerModel = WidgetPlayerControl();
   }
 
   @override
   Widget build(BuildContext ctx) {
     // Allows to hold multiple models.
+    if (_spotifyModel == null || _cadenceModel == null || _bpmModel == null)
+      return Container();
     return MultiProvider(
         // TODO : The interaction between models has not been finalised.
         providers: [
           ChangeNotifierProvider.value(value: _cadenceModel),
+          ChangeNotifierProvider.value(value: _widgetPlayerModel),
           Provider.value(value: _bpmModel),
           Provider.value(value: _spotifyModel),
-          ChangeNotifierProvider.value(value: _playerModel),
         ],
-        child: Center(
-            child: Column(children: [
-          Consumer<CadencePedometerModel>(
-            builder: (context, cpModel, child) {
-              if (!_cadenceModel.isActive ||
-                  (_cadenceModel.isActive && _cadenceModel.timeElapsed < 3)) {
-                //Arbitrary X seconds counter to 'assume' BPM has been stabilized
-                //TODO: Change X, X is 3 for now for testing purposes
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      ElevatedButton(
-                        child: Text(cpModel.isActive ? "Stop" : "Start"),
-                        onPressed: () => cpModel.toggleStatus(),
-                      ),
-                      CadencePedometerWidget(
-                        cadenceActive: cpModel.isActive,
-                        steps: cpModel.steps,
-                        cadence: cpModel.cadence,
-                      )
-                    ]);
-              } else {
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      ElevatedButton(
-                        child: Text("Stop Activity"),
-                        onPressed: () =>
-                            cpModel.stop(), //TODO: Full implementation
-                      ),
-                      CadencePedometerWidget(
-                        cadenceActive: cpModel.isActive,
-                        steps: cpModel.steps,
-                        cadence: cpModel.cadence,
-                      ),
-                      Consumer<WidgetPlayerModel>(
-                          builder: (context, spotifyModel, child) {
-                        return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              WidgetSpotifyPlayer(),
-                            ]);
-                      }),
-                    ]);
-              }
-            },
-          ),
-        ])));
+        child: Container(
+            height: double.maxFinite, child: Column(children: [buildMain()])));
+  }
+
+  Widget buildMain() {
+    if (_cadenceModel == null) return Container();
+
+    return Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
+      if (!cpModel.isActive || (cpModel.isActive && cpModel.timeElapsed < 3)) {
+        //Arbitrary X seconds counter to 'assume' BPM has been stabilized
+        //TODO: Change X, X is 3 for now for testing purposes
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              ElevatedButton(
+                child: Text(cpModel.isActive ? "Stop" : "Start"),
+                onPressed: () => cpModel.toggleStatus(),
+              ),
+              CadencePedometerWidget()
+            ]);
+      } else {
+        return Expanded(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+              ElevatedButton(
+                child: Text("Stop Activity"),
+                onPressed: () => cpModel.stop(), //TODO: Full implementation
+              ),
+              CadencePedometerWidget(),
+              Spacer(),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: WidgetSpotifyPlayer()),
+            ]));
+      }
+    });
   }
 }
