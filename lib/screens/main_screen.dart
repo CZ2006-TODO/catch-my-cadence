@@ -36,10 +36,11 @@ class _MainScreenBody extends StatefulWidget {
 }
 
 class _MainScreenBodyState extends State<_MainScreenBody> {
-  late CadencePedometerModel? _cadenceModel;
-  late GetSongBPMModel? _bpmModel;
-  late SpotifyControllerModel? _spotifyModel;
-  late WidgetPlayerControl? _widgetPlayerModel;
+  late CadencePedometerModel _cadenceModel;
+  late GetSongBPMModel _bpmModel;
+  late SpotifyControllerModel _spotifyModel;
+  late WidgetPlayerControl _widgetPlayerModel;
+
   @override
   void initState() {
     super.initState();
@@ -52,8 +53,6 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   @override
   Widget build(BuildContext ctx) {
     // Allows to hold multiple models.
-    if (_spotifyModel == null || _cadenceModel == null || _bpmModel == null)
-      return Container();
     return MultiProvider(
         // TODO : The interaction between models has not been finalised.
         providers: [
@@ -67,8 +66,6 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   }
 
   Widget buildMain() {
-    if (_cadenceModel == null) return Container();
-
     return Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
       if (!cpModel.isActive || (cpModel.isActive && cpModel.timeElapsed < 3)) {
         //Arbitrary X seconds counter to 'assume' BPM has been stabilized

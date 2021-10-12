@@ -1,11 +1,9 @@
 import 'dart:developer';
 
-import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
 import 'package:catch_my_cadence/models/widget_player_model.dart';
 import 'package:catch_my_cadence/util/AppConstants.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/provider.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
 class WidgetSpotifyPlayer extends StatelessWidget {
@@ -50,7 +48,8 @@ class WidgetSpotifyPlayer extends StatelessWidget {
                     TextButton(
                         onPressed: () {
                           WidgetPlayerControl.playByBPM(80);
-                        }, //TODO: Remove eventually. This eyesore is here for testing only.
+                        },
+                        //TODO: Remove eventually. This eyesore is here for testing only.
                         child: Icon(Icons.money,
                             size: AppConstants.sizePlayerControls,
                             color: AppConstants.colorPlayerControls)),
