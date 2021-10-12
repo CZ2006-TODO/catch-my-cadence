@@ -15,15 +15,19 @@ class GetSongBPMModel {
   };
 
   // getSongs: Returns a list of songs with a given BPM.
-  Future<List<TempoSong>> getSongs(int bpm) async {
+  static Future<List<TempoSong>> getSongs(int bpm) async {
     final queryParams = {
       "api_key": Config.getSongBpmApiKey,
       "bpm": bpm.toString(),
     };
     final uri = Uri.https(_baseAPI, _tempoPath, queryParams);
     final response = await http.get(uri, headers: _headers);
-
+    var json = jsonDecode(response.body);
     if (response.statusCode == 200) {
+      if (json["tempo"] is Map &&
+          (json["tempo"] as Map).containsKey(
+              "error")) //API returns error message as a json key hence we check for it here
+        throw Exception(jsonDecode(response.body)["tempo"]["error"]);
       var songListJson = jsonDecode(response.body)["tempo"] as List;
       List<TempoSong> songs =
           songListJson.map((s) => TempoSong.fromJson(s)).toList();
