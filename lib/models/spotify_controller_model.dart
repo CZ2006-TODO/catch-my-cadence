@@ -9,6 +9,8 @@ import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
+import 'get_song_bpm_model.dart';
+
 // SpotifyControllerModel is in charge of communicating and controlling the
 // Spotify App.
 // TODO: Only does connection right now. Should also implement other stuff like the playing logic.
@@ -62,13 +64,15 @@ class SpotifyControllerModel {
     }
   }
 
-  static Future<String> searchTrackByTitle(String title) async {
+  static Future<String> searchTrackByTitle(TempoSong song) async {
     final credentials =
         SpotifyApiCredentials(Config.clientId, Config.clientSecret);
     final spotify = SpotifyApi(credentials);
-
+    String songtitle = song.songTitle;
+    String songartist = song.artist.name;
+    String searchargument = songtitle + ' ' + songartist;
     var search = await spotify.search
-        .get(title, types: [SearchType.track])
+        .get(searchargument, types: [SearchType.track])
         .first(1)
         .catchError((err) {
           print((err as SpotifyException).message);
@@ -83,12 +87,12 @@ class SpotifyControllerModel {
       return firstTrack.uri!;
     }
     throw new Exception(
-        "searchTrackByTitle did not find a valid uri for title " + title);
+        "searchTrackByTitle did not find a valid uri for title " + songtitle);
   }
 
   //Wrapper for searching + playing
-  static void playSong(String title) async {
-    String uri = await searchTrackByTitle(title);
+  static void playSong(TempoSong song) async {
+    String uri = await searchTrackByTitle(song);
     doPlay(uri);
   }
 
