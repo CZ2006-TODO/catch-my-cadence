@@ -50,8 +50,8 @@ class WidgetPlayerControl extends ChangeNotifier {
     SpotifyControllerModel.doPlay(uri);
   }
 
-  static void playByTitle(String title) async {
-    String? uri = await SpotifyControllerModel.searchTrackByTitle(title);
+  static void playByTitle(TempoSong song) async {
+    String? uri = await SpotifyControllerModel.searchTrackByTitle(song);
     play(uri);
   }
 
@@ -65,16 +65,17 @@ class WidgetPlayerControl extends ChangeNotifier {
     }
     GetSongBPMModel.getSongs(bpm).then((value) {
       var random = new Random();
-      var title = value[random.nextInt(value.length + 1) - 2].songTitle;
+      var title = value[random.nextInt(value.length + 1) - 2];
+
       //Pick random title from list of results from GetSongBPM API
-      AppConstants.toastShort("Playing " + title);
+      AppConstants.toastShort("Playing " + title.songTitle);
       playByTitle(title);
     });
   }
 
-  void playNeverGonna() {
-    AppConstants.toastShort(
-        "Playing arbitrary song `Never Gonna Give You Up` by title");
-    playByTitle("Never Gonna Give You Up");
-  }
+  // void playNeverGonna() {
+  //   AppConstants.toastShort(
+  //       "Playing arbitrary song `Never Gonna Give You Up` by title");
+  //   playByTitle("Never Gonna Give You Up");
+  // }
 }
