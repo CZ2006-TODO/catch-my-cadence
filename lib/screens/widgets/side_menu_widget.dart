@@ -122,4 +122,19 @@ class SideMenu extends StatelessWidget {
       // }
     );
   }
+
+  // _LogoutOption : Routes the user to LoggedOutScreen.
+  ListTile _LogOutOption(BuildContext context) {
+    return ListTile(
+      title: Text(
+        'Log Out',
+      ),
+      leading: Icon(
+        Icons.arrow_forward_rounded,
+      ),
+      // onTap:(){
+      // TODO: Link to Logout screen
+      // }
+    );
+  }
 }
