@@ -1,5 +1,7 @@
 import 'package:catch_my_cadence/routes.dart';
+import 'package:catch_my_cadence/config.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 // SideMenu is the side menu for the application.
 // This side menu contains options to go to other different screens
@@ -127,15 +129,18 @@ class SideMenu extends StatelessWidget {
   // _LogoutOption : Routes the user to LoggedOutScreen.
   ListTile _logoutOption(BuildContext context) {
     return ListTile(
-      title: Text(
-        'Log Out',
-      ),
-      leading: Icon(
-        Icons.logout,
-      ),
-      // onTap:(){
-      // TODO: Link to Logout screen
-      // }
-    );
+        title: Text(
+          'Log Out',
+        ),
+        leading: Icon(
+          Icons.logout,
+        ),
+        onTap: () {
+          Config.setFirstRunFlag(true);
+          log("Logging Out");
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              RouteDelegator.LOADING_SCREEN_ROUTE,
+              (Route<dynamic> route) => false);
+        });
   }
 }
