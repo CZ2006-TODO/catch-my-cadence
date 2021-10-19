@@ -1,25 +1,21 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/config.dart';
+import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/screens/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
-import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
-
-import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 
 // SpotifyControllerModel is in charge of communicating and controlling the
 // Spotify App.
 class SpotifyControllerModel {
   late Stream<ConnectionStatus> spotifyConnection;
-  late Stream<PlayerState> _playerStateStream;
 
   SpotifyControllerModel(BuildContext ctx) {
     connectWithSpotify(ctx);
-    _playerStateStream = SpotifySdk.subscribePlayerState();
   }
 
   // connectWithSpotify: Calls the SpotifySdk.connectWithSpotify function
@@ -119,9 +115,5 @@ class SpotifyControllerModel {
 
   static Future<void> doPlay(String uri) async {
     await SpotifySdk.play(spotifyUri: uri);
-  }
-
-  Stream<PlayerState> get playerStateStream {
-    return this._playerStateStream;
   }
 }

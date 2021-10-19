@@ -7,6 +7,7 @@ import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 
 // MainScreen is the screen that the user will see after confirming connection
 // with Spotify.
@@ -89,7 +90,8 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
         widgets.add(Spacer());
         widgets.add(Align(
           alignment: Alignment.bottomCenter,
-          child: MediaPlayerWidget(_spotifyModel.playerStateStream),
+          // NOTE : Error when trying to get from existing stream. No idea why!
+          child: MediaPlayerWidget(SpotifySdk.subscribePlayerState()),
         ));
       }
       return Column(
