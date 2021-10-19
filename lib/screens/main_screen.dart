@@ -21,7 +21,10 @@ class MainScreen extends StatelessWidget {
         title: Text("Main Screen"),
       ),
       drawer: SideMenu(),
-      body: _MainScreenBody(),
+      body: Padding(
+        padding: EdgeInsets.all(10),
+        child: _MainScreenBody(),
+      ),
     );
   }
 }
@@ -54,47 +57,44 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   Widget build(BuildContext ctx) {
     // Allows to hold multiple models.
     return MultiProvider(
-        // TODO : The interaction between models has not been finalised.
-        providers: [
-          ChangeNotifierProvider.value(value: _cadenceModel),
-          ChangeNotifierProvider.value(value: _widgetPlayerModel),
-          Provider.value(value: _bpmModel),
-          Provider.value(value: _spotifyModel),
-        ],
-        child: Container(
-            height: double.maxFinite, child: Column(children: [buildMain()])));
+      // TODO : The interaction between models has not been finalised.
+      providers: [
+        ChangeNotifierProvider.value(value: _cadenceModel),
+        ChangeNotifierProvider.value(value: _widgetPlayerModel),
+        Provider.value(value: _bpmModel),
+        Provider.value(value: _spotifyModel),
+      ],
+      child: mainWidgets(),
+    );
   }
 
-  Widget buildMain() {
-    return Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
-      if (!cpModel.isActive || (cpModel.isActive && cpModel.timeElapsed < 3)) {
-        //Arbitrary X seconds counter to 'assume' BPM has been stabilized
-        //TODO: Change X, X is 3 for now for testing purposes
-        return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              ElevatedButton(
-                child: Text(cpModel.isActive ? "Stop" : "Start"),
-                onPressed: () => cpModel.toggleStatus(),
-              ),
-              CadencePedometerWidget()
-            ]);
-      } else {
-        return Expanded(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-              ElevatedButton(
-                child: Text("Stop Activity"),
-                onPressed: () => cpModel.stop(), //TODO: Full implementation
-              ),
-              CadencePedometerWidget(),
-              Spacer(),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: WidgetSpotifyPlayer()),
-            ]));
+  Widget mainWidgets() {
+    return Center(child:
+        Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
+      // These widgets are always built.
+      List<Widget> widgets = [
+        ElevatedButton(
+          child: Text(cpModel.isActive ? "Stop" : "Start"),
+          onPressed: () => cpModel.toggleStatus(),
+        ),
+        CadencePedometerWidget(
+          cadenceActive: cpModel.isActive,
+          steps: cpModel.steps,
+          cadence: cpModel.cadence,
+        )
+      ];
+      // Add this only if the cpMpdel is active and time elapsed > 3.
+      if (cpModel.isActive && cpModel.timeElapsed > 3) {
+        widgets.add(Spacer());
+        widgets.add(Align(
+          alignment: Alignment.bottomCenter,
+          child: WidgetSpotifyPlayer(),
+        ));
       }
-    });
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: widgets,
+      );
+    }));
   }
 }

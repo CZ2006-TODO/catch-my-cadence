@@ -72,10 +72,4 @@ class WidgetPlayerControl extends ChangeNotifier {
       playByTitle(title);
     });
   }
-
-  // void playNeverGonna() {
-  //   AppConstants.toastShort(
-  //       "Playing arbitrary song `Never Gonna Give You Up` by title");
-  //   playByTitle("Never Gonna Give You Up");
-  // }
 }
