@@ -83,8 +83,9 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
           cadence: cpModel.cadence,
         )
       ];
-      // Add this only if the cpMpdel is active and time elapsed > 3.
-      if (cpModel.isActive && cpModel.timeElapsed > 3) {
+      // Add this only if the cpMpdel is active and time elapsed > 3s.
+      if (cpModel.isActive &&
+          cpModel.timeElapsed > Duration(seconds: 3).inMilliseconds) {
         widgets.add(Spacer());
         widgets.add(Align(
           alignment: Alignment.bottomCenter,

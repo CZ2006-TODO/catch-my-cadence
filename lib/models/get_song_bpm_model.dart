@@ -39,7 +39,8 @@ class GetSongBPMModel {
     }
 
     List songsJson = resp["tempo"] as List;
-    List<TempoSong> songs = songsJson.map((s) => TempoSong.fromJson(s)).toList();
+    List<TempoSong> songs =
+        songsJson.map((s) => TempoSong.fromJson(s)).toList();
     log("Got ${songs.length} songs");
     return songs;
   }
