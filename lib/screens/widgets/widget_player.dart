@@ -1,15 +1,18 @@
 import 'dart:developer';
 
+import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
 import 'package:catch_my_cadence/models/widget_player_model.dart';
 import 'package:catch_my_cadence/util/AppConstants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
 class WidgetSpotifyPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //var _bpm = context.read<CadencePedometerModel>();
+    var _cadencePedometerContext = context.read<CadencePedometerModel>();
+    int _bpm = _cadencePedometerContext.cadence;
 
     print("Building widget_player");
     return StreamBuilder<PlayerState>(
@@ -47,14 +50,14 @@ class WidgetSpotifyPlayer extends StatelessWidget {
                   children: [
                     TextButton(
                         onPressed: () {
-                          WidgetPlayerControl.playByBPM(80);
+                          WidgetPlayerControl.playByBPM(_bpm);
                         },
                         //TODO: Remove eventually. This eyesore is here for testing only.
                         child: Icon(Icons.money,
                             size: AppConstants.sizePlayerControls,
                             color: AppConstants.colorPlayerControls)),
                   ],
-                )
+                ),
               ]));
         });
   }

@@ -67,16 +67,20 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
 
   Widget buildMain() {
     return Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
-      if (!cpModel.isActive || (cpModel.isActive && cpModel.timeElapsed < 3)) {
-        //Arbitrary X seconds counter to 'assume' BPM has been stabilized
-        //TODO: Change X, X is 3 for now for testing purposes
+      //Arbitrary X seconds counter to 'assume' BPM has been stabilized
+      //TODO: Change X, X is 3 for now for testing purposes
+      const int DELAY_BEFORE_FETCHING = 3;
+      if (!cpModel.isActive ||
+          (cpModel.isActive && cpModel.timeElapsed < DELAY_BEFORE_FETCHING)) {
         return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               ElevatedButton(
-                child: Text(cpModel.isActive ? "Stop" : "Start"),
-                onPressed: () => cpModel.toggleStatus(),
-              ),
+                  child: Text(cpModel.isActive ? "Stop" : "Start"),
+                  // onPressed: () => cpModel.toggleStatus(),
+                  onPressed: () {
+                    cpModel.toggleStatus();
+                  }),
               CadencePedometerWidget()
             ]);
       } else {

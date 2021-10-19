@@ -13,7 +13,6 @@ import 'get_song_bpm_model.dart';
 
 // SpotifyControllerModel is in charge of communicating and controlling the
 // Spotify App.
-// TODO: Only does connection right now. Should also implement other stuff like the playing logic.
 class SpotifyControllerModel {
   late Stream<ConnectionStatus> spotifyConnection;
 
@@ -64,6 +63,8 @@ class SpotifyControllerModel {
     }
   }
 
+  // Takes in a TempoSong
+  // Returns the URI of the spotify track
   static Future<String> searchTrackByTitle(TempoSong song) async {
     final credentials =
         SpotifyApiCredentials(Config.clientId, Config.clientSecret);
