@@ -17,7 +17,7 @@ class GetSongBPMModel {
   };
 
   // getSongs: Returns a list of songs with a given BPM.
-  Future<List<TempoSong>> getSongs(int bpm) async {
+  static Future<List<TempoSong>> getSongs(int bpm) async {
     log("Getting songs of BPM $bpm");
     final queryParams = {
       "api_key": Config.getSongBpmApiKey,
