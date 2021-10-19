@@ -89,7 +89,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
         widgets.add(Spacer());
         widgets.add(Align(
           alignment: Alignment.bottomCenter,
-          child: MediaPlayerWidget(SpotifyControllerModel.subscribePlayerState()),
+          child: MediaPlayerWidget(_spotifyModel.playerStateStream),
         ));
       }
       return Column(
