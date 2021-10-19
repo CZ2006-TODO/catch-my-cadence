@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
 import 'package:catch_my_cadence/util/AppConstants.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,7 @@ import 'package:spotify_sdk/models/player_options.dart' as popt;
 import 'package:spotify_sdk/models/player_restrictions.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
-import 'get_song_bpm_model.dart';
-
-class WidgetPlayerControl extends ChangeNotifier {
+class MediaPlayerController extends ChangeNotifier {
   late StreamController controller = StreamController();
   late StreamSubscription playerStateSubscription;
   late Stream<PlayerState> playerStateStream;

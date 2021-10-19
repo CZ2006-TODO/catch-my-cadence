@@ -9,7 +9,7 @@ import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
-import 'get_song_bpm_model.dart';
+import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 
 // SpotifyControllerModel is in charge of communicating and controlling the
 // Spotify App.

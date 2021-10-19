@@ -1,10 +1,10 @@
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
-import 'package:catch_my_cadence/models/widget_player_model.dart';
+import 'package:catch_my_cadence/models/media_controller_model.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
-import 'package:catch_my_cadence/screens/widgets/widget_player.dart';
+import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +42,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   late CadencePedometerModel _cadenceModel;
   late GetSongBPMModel _bpmModel;
   late SpotifyControllerModel _spotifyModel;
-  late WidgetPlayerControl _widgetPlayerModel;
+  late MediaPlayerController _mediaModel;
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
     _spotifyModel = SpotifyControllerModel(context);
     _cadenceModel = CadencePedometerModel();
     _bpmModel = GetSongBPMModel();
-    _widgetPlayerModel = WidgetPlayerControl();
+    _mediaModel = MediaPlayerController();
   }
 
   @override
@@ -60,7 +60,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
       // TODO : The interaction between models has not been finalised.
       providers: [
         ChangeNotifierProvider.value(value: _cadenceModel),
-        ChangeNotifierProvider.value(value: _widgetPlayerModel),
+        ChangeNotifierProvider.value(value: _mediaModel),
         Provider.value(value: _bpmModel),
         Provider.value(value: _spotifyModel),
       ],
@@ -89,7 +89,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
         widgets.add(Spacer());
         widgets.add(Align(
           alignment: Alignment.bottomCenter,
-          child: WidgetSpotifyPlayer(),
+          child: MediaPlayerWidget(),
         ));
       }
       return Column(

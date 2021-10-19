@@ -1,12 +1,12 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
-import 'package:catch_my_cadence/models/widget_player_model.dart';
+import 'package:catch_my_cadence/models/media_controller_model.dart';
 import 'package:catch_my_cadence/util/AppConstants.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
-class WidgetSpotifyPlayer extends StatelessWidget {
+class MediaPlayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //var _bpm = context.read<CadencePedometerModel>();
@@ -47,7 +47,7 @@ class WidgetSpotifyPlayer extends StatelessWidget {
                   children: [
                     TextButton(
                         onPressed: () {
-                          WidgetPlayerControl.playByBPM(80);
+                          MediaPlayerController.playByBPM(80);
                         },
                         //TODO: Remove eventually. This eyesore is here for testing only.
                         child: Icon(Icons.money,
@@ -104,8 +104,8 @@ class WidgetSpotifyPlayer extends StatelessWidget {
                 color: AppConstants.colorPlayerControls)),
         TextButton(
             onPressed: () => playerState.isPaused
-                ? WidgetPlayerControl.resume()
-                : WidgetPlayerControl.pause(),
+                ? MediaPlayerController.resume()
+                : MediaPlayerController.pause(),
             child: Icon(playerState.isPaused ? Icons.play_arrow : Icons.pause,
                 size: AppConstants.sizePlayerControls! + 40,
                 color: AppConstants.colorPlayerControls)),
