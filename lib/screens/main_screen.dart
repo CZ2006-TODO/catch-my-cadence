@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
@@ -69,7 +71,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
     return Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
       //Arbitrary X seconds counter to 'assume' BPM has been stabilized
       //TODO: Change X, X is 3 for now for testing purposes
-      const int DELAY_BEFORE_FETCHING = 3;
+      const int DELAY_BEFORE_FETCHING = 5;
       if (!cpModel.isActive ||
           (cpModel.isActive && cpModel.timeElapsed < DELAY_BEFORE_FETCHING)) {
         return Column(
@@ -80,6 +82,14 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
                   // onPressed: () => cpModel.toggleStatus(),
                   onPressed: () {
                     cpModel.toggleStatus();
+                    Timer? t;
+                    if (cpModel.isActive) {
+                      Timer(new Duration(seconds: DELAY_BEFORE_FETCHING), () {
+                        WidgetPlayerControl.playByBPM(cpModel.cadence);
+                      });
+                    } else {
+                      t?.cancel();
+                    }
                   }),
               CadencePedometerWidget()
             ]);
@@ -89,9 +99,11 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
               ElevatedButton(
-                child: Text("Stop Activity"),
-                onPressed: () => cpModel.stop(), //TODO: Full implementation
-              ),
+                  child: Text("Stop Activity"),
+                  onPressed: () {
+                    cpModel.stop();
+                    WidgetPlayerControl.pause(); //TODO: Full implementation
+                  }),
               CadencePedometerWidget(),
               Spacer(),
               Align(
