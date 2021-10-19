@@ -1,22 +1,17 @@
-import 'dart:developer';
-
-import 'package:catch_my_cadence/models/spotify_controller_model.dart';
 import 'package:catch_my_cadence/models/media_controller_model.dart';
-import 'package:catch_my_cadence/util/AppConstants.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
 class MediaPlayerWidget extends StatelessWidget {
+  late final Stream<PlayerState> _stateStream;
+
+  MediaPlayerWidget(this._stateStream);
+
   @override
   Widget build(BuildContext context) {
-    //var _bpm = context.read<CadencePedometerModel>();
-
-    print("Building widget_player");
     return StreamBuilder<PlayerState>(
-        stream: SpotifyControllerModel.subscribePlayerState(),
+        stream: _stateStream,
         builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
-          log("Player snapshot connstate: " +
-              snapshot.connectionState.toString());
           var track = snapshot.data?.track;
           var playerState = snapshot.data;
 
@@ -25,97 +20,43 @@ class MediaPlayerWidget extends StatelessWidget {
               child: Container(),
             );
           }
-          return SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(children: [
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  TextButton(
-                      onPressed: null,
-                      child: Text(playerState.playbackPosition.toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                              fontSize: 32,
-                              overflow: TextOverflow.ellipsis,
-                              height: 1)))
-                ]),
-                getPlayerControlTrackTitle(playerState),
-                getPlayerControlTrackArtist(playerState),
-                getPlayerControlButtons(playerState),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          MediaPlayerController.playByBPM(80);
-                        },
-                        //TODO: Remove eventually. This eyesore is here for testing only.
-                        child: Icon(Icons.money,
-                            size: AppConstants.sizePlayerControls,
-                            color: AppConstants.colorPlayerControls)),
-                  ],
-                )
-              ]));
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Playback position
+              Text("${playerState.playbackPosition}/${track.duration}",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2),
+              SizedBox(height: 10),
+              // Track name
+              Text("${track.name}",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline4),
+              SizedBox(height: 10),
+              // Track artist
+              Text("${track.artist.name}",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2),
+              SizedBox(height: 10),
+              // Controls
+              TextButton(
+                  onPressed: () => playerState.isPaused
+                      ? MediaPlayerController.resume()
+                      : MediaPlayerController.pause(),
+                  child: Icon(
+                    playerState.isPaused ? Icons.play_arrow : Icons.pause,
+                  )),
+              SizedBox(height: 10),
+              // Change song?
+              // TODO : Fix lagginess (potential mem leak)?
+              TextButton(
+                  onPressed: () {
+                    MediaPlayerController.playByBPM(80);
+                  },
+                  //TODO: Remove eventually. This eyesore is here for testing only.
+                  child: Icon(Icons.money)),
+            ],
+          );
         });
-  }
-
-  Row getPlayerControlTrackTitle(PlayerState playerState) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      TextButton(
-          onPressed: null,
-          child: Text(
-              playerState.track == null
-                  ? "Not available"
-                  : playerState.track!.name,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 32,
-                  overflow: TextOverflow.ellipsis,
-                  height: 1)))
-    ]);
-  }
-
-  Row getPlayerControlTrackArtist(PlayerState playerState) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      TextButton(
-          onPressed: null,
-          child: Text(
-              playerState.track == null
-                  ? "Not available"
-                  : playerState.track!.artist.name!,
-              style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 16,
-                  overflow: TextOverflow.ellipsis,
-                  height: -0.5)))
-    ]);
-  }
-
-  Row getPlayerControlButtons(PlayerState playerState) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextButton(
-            onPressed: () => AppConstants.toastShort(
-                "Not implemented"), //TODO: Implementation
-            child: Icon(Icons.block,
-                size: AppConstants.sizePlayerControls,
-                color: AppConstants.colorPlayerControls)),
-        TextButton(
-            onPressed: () => playerState.isPaused
-                ? MediaPlayerController.resume()
-                : MediaPlayerController.pause(),
-            child: Icon(playerState.isPaused ? Icons.play_arrow : Icons.pause,
-                size: AppConstants.sizePlayerControls! + 40,
-                color: AppConstants.colorPlayerControls)),
-        TextButton(
-            onPressed: () => AppConstants.toastShort(
-                "Not implemented"), //TODO: Implementation
-            child: Icon(Icons.skip_next,
-                size: AppConstants.sizePlayerControls,
-                color: AppConstants.colorPlayerControls)),
-      ],
-    );
   }
 }
