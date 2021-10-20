@@ -64,7 +64,10 @@ class MediaPlayerController extends ChangeNotifier {
     }
     GetSongBPMModel.getSongs(bpm).then((value) {
       var random = new Random();
-      var title = value[random.nextInt(value.length + 1) - 2];
+      // choose a random song from the first half of the list
+      // we ignore the later songs because they are not as good of a match
+      int randomIndex = (random.nextInt(value.length) / 2).round();
+      var title = value[randomIndex];
 
       //Pick random title from list of results from GetSongBPM API
       AppConstants.toastShort("Playing " + title.songTitle);

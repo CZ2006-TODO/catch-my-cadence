@@ -61,6 +61,8 @@ class SpotifyControllerModel {
     }
   }
 
+  // Takes in a TempoSong
+  // Returns the URI of the spotify track
   static Future<String> searchTrackByTitle(TempoSong song) async {
     final credentials =
         SpotifyApiCredentials(Config.clientId, Config.clientSecret);
