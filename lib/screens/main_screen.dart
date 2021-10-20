@@ -76,6 +76,12 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
       List<Widget> widgets = [
         ElevatedButton(
           child: Text(cpModel.isActive ? "Stop" : "Start"),
+          // TODO : Hong Xiang add your previous change here.
+          // IMO, having a conditional check here for starting and stopping
+          // means we are doing something wrong. Ideally one model should have
+          // a toggle method that will start and stop the whole process.
+          // CadencePedometerModel doesn't seem like the right model for that.
+          // Maybe SpotifyController will have a toggle? idk.
           onPressed: () => cpModel.toggleStatus(),
         ),
         CadencePedometerWidget(
@@ -91,6 +97,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
         widgets.add(Align(
           alignment: Alignment.bottomCenter,
           // NOTE : Error when trying to get from existing stream. No idea why!
+          // TODO : Change this.
           child: MediaPlayerWidget(SpotifySdk.subscribePlayerState()),
         ));
       }
