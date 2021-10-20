@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:catch_my_cadence/config.dart';
 import 'package:http/http.dart' as http;
@@ -16,25 +18,31 @@ class GetSongBPMModel {
 
   // getSongs: Returns a list of songs with a given BPM.
   static Future<List<TempoSong>> getSongs(int bpm) async {
+    log("Getting songs of BPM $bpm");
     final queryParams = {
       "api_key": Config.getSongBpmApiKey,
       "bpm": bpm.toString(),
     };
     final uri = Uri.https(_baseAPI, _tempoPath, queryParams);
     final response = await http.get(uri, headers: _headers);
-    var json = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      if (json["tempo"] is Map &&
-          (json["tempo"] as Map).containsKey(
-              "error")) //API returns error message as a json key hence we check for it here
-        throw Exception(jsonDecode(response.body)["tempo"]["error"]);
-      var songListJson = jsonDecode(response.body)["tempo"] as List;
-      List<TempoSong> songs =
-          songListJson.map((s) => TempoSong.fromJson(s)).toList();
-      return songs;
-    } else {
-      throw Exception("Failed to fetch songs from getSongBPM API");
+
+    var resp = jsonDecode(response.body);
+
+    if (response.statusCode != 200 || resp is! Map) {
+      throw HttpException("GetSongBPM error!");
+    } else if (!resp.containsKey("tempo")) {
+      throw HttpException("GetSongBPM endpoint error!");
+    } else if (resp["tempo"] is Map &&
+        (resp["tempo"] as Map).containsKey("error")) {
+      throw HttpException(
+          "GetSongBPM tempo endpoint error: ${resp["tempo"]["error"]}");
     }
+
+    List songsJson = resp["tempo"] as List;
+    List<TempoSong> songs =
+        songsJson.map((s) => TempoSong.fromJson(s)).toList();
+    log("Got ${songs.length} songs");
+    return songs;
   }
 }
 

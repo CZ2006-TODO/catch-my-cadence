@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -70,8 +71,7 @@ class CadencePedometerModel with ChangeNotifier {
   void _setUpTimer() {
     // This periodic timer updates the current cadence when calculation is active.
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      int timeDifference = DateTime.now().millisecondsSinceEpoch - _startTime;
-      // Needed due to start time error correction.
+      int timeDifference = this.timeElapsed;
       if (timeDifference <= 0) {
         return;
       }
@@ -126,6 +126,7 @@ class CadencePedometerModel with ChangeNotifier {
   int get timeElapsed {
     var now = DateTime.now().millisecondsSinceEpoch;
     var diff = now - _startTime;
-    return (diff / 1000).floor(); //return time in seconds floored
+    // Needed due to start time error correction. See _setActiveState.
+    return math.max(diff, 0); // Returns elapsed milliseconds.
   }
 }

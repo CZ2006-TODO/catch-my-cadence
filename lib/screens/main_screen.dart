@@ -1,14 +1,13 @@
-import 'dart:async';
-
 import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
 import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
-import 'package:catch_my_cadence/models/widget_player_model.dart';
+import 'package:catch_my_cadence/models/media_controller_model.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
-import 'package:catch_my_cadence/screens/widgets/widget_player.dart';
+import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 
 // MainScreen is the screen that the user will see after confirming connection
 // with Spotify.
@@ -23,7 +22,10 @@ class MainScreen extends StatelessWidget {
         title: Text("Main Screen"),
       ),
       drawer: SideMenu(),
-      body: _MainScreenBody(),
+      body: Padding(
+        padding: EdgeInsets.all(10),
+        child: _MainScreenBody(),
+      ),
     );
   }
 }
@@ -41,7 +43,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   late CadencePedometerModel _cadenceModel;
   late GetSongBPMModel _bpmModel;
   late SpotifyControllerModel _spotifyModel;
-  late WidgetPlayerControl _widgetPlayerModel;
+  late MediaPlayerController _mediaModel;
 
   @override
   void initState() {
@@ -49,68 +51,53 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
     _spotifyModel = SpotifyControllerModel(context);
     _cadenceModel = CadencePedometerModel();
     _bpmModel = GetSongBPMModel();
-    _widgetPlayerModel = WidgetPlayerControl();
+    _mediaModel = MediaPlayerController();
   }
 
   @override
   Widget build(BuildContext ctx) {
     // Allows to hold multiple models.
     return MultiProvider(
-        // TODO : The interaction between models has not been finalised.
-        providers: [
-          ChangeNotifierProvider.value(value: _cadenceModel),
-          ChangeNotifierProvider.value(value: _widgetPlayerModel),
-          Provider.value(value: _bpmModel),
-          Provider.value(value: _spotifyModel),
-        ],
-        child: Container(
-            height: double.maxFinite, child: Column(children: [buildMain()])));
+      // TODO : The interaction between models has not been finalised.
+      providers: [
+        ChangeNotifierProvider.value(value: _cadenceModel),
+        ChangeNotifierProvider.value(value: _mediaModel),
+        Provider.value(value: _bpmModel),
+        Provider.value(value: _spotifyModel),
+      ],
+      child: mainWidgets(),
+    );
   }
 
-  Widget buildMain() {
-    return Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
-      //Arbitrary X seconds counter to 'assume' BPM has been stabilized
-      //TODO: Change X, X is 3 for now for testing purposes
-      const int DELAY_BEFORE_FETCHING = 5;
-      if (!cpModel.isActive ||
-          (cpModel.isActive && cpModel.timeElapsed < DELAY_BEFORE_FETCHING)) {
-        return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              ElevatedButton(
-                  child: Text(cpModel.isActive ? "Stop" : "Start"),
-                  // onPressed: () => cpModel.toggleStatus(),
-                  onPressed: () {
-                    cpModel.toggleStatus();
-                    Timer? t;
-                    if (cpModel.isActive) {
-                      Timer(new Duration(seconds: DELAY_BEFORE_FETCHING), () {
-                        WidgetPlayerControl.playByBPM(cpModel.cadence);
-                      });
-                    } else {
-                      t?.cancel();
-                    }
-                  }),
-              CadencePedometerWidget()
-            ]);
-      } else {
-        return Expanded(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-              ElevatedButton(
-                  child: Text("Stop Activity"),
-                  onPressed: () {
-                    cpModel.stop();
-                    WidgetPlayerControl.pause(); //TODO: Full implementation
-                  }),
-              CadencePedometerWidget(),
-              Spacer(),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: WidgetSpotifyPlayer()),
-            ]));
+  Widget mainWidgets() {
+    return Center(child:
+        Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
+      // These widgets are always built.
+      List<Widget> widgets = [
+        ElevatedButton(
+          child: Text(cpModel.isActive ? "Stop" : "Start"),
+          onPressed: () => cpModel.toggleStatus(),
+        ),
+        CadencePedometerWidget(
+          cadenceActive: cpModel.isActive,
+          steps: cpModel.steps,
+          cadence: cpModel.cadence,
+        )
+      ];
+      // Add this only if the cpMpdel is active and time elapsed > 3s.
+      if (cpModel.isActive &&
+          cpModel.timeElapsed > Duration(seconds: 3).inMilliseconds) {
+        widgets.add(Spacer());
+        widgets.add(Align(
+          alignment: Alignment.bottomCenter,
+          // NOTE : Error when trying to get from existing stream. No idea why!
+          child: MediaPlayerWidget(SpotifySdk.subscribePlayerState()),
+        ));
       }
-    });
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: widgets,
+      );
+    }));
   }
 }
