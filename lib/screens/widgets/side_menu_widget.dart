@@ -89,9 +89,10 @@ class SideMenu extends StatelessWidget {
           Icons.info,
         ),
         onTap: () {
-          // Pops all screens from view stack until AboutScreen is at the top of the stack.
-          Navigator.of(context)
-              .popAndPushNamed(RouteDelegator.ABOUT_SCREEN_ROUTE);
+          // Pops all screens from view stack until MainScreen is at the top of the stack, then push AboutScreen.
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              RouteDelegator.ABOUT_SCREEN_ROUTE,
+              ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
         });
   }
 
@@ -114,16 +115,18 @@ class SideMenu extends StatelessWidget {
   // _settingsOption : Routes user to SettingsScreen.
   ListTile _settingsOption(BuildContext context) {
     return ListTile(
-      title: Text(
-        'Settings',
-      ),
-      leading: Icon(
-        Icons.settings,
-      ),
-      // onTap:(){
-      // TODO: Link to settings screen
-      // }
-    );
+        title: Text(
+          'Settings',
+        ),
+        leading: Icon(
+          Icons.settings,
+        ),
+        onTap: () {
+          // Pops all screens from view stack until MainScreen is at the top of the stack, then push SettingsScreen.
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              RouteDelegator.SETTINGS_SCREEN_ROUTE,
+              ModalRoute.withName(RouteDelegator.MAIN_SCREEN_ROUTE));
+        });
   }
 
   // _LogoutOption : Routes the user to LoggedOutScreen.
@@ -136,6 +139,7 @@ class SideMenu extends StatelessWidget {
           Icons.logout,
         ),
         onTap: () {
+          // Sets firstRunFlag to true, logs "logging out" and pops the entire view stack and push LoadingScreen.
           Config.setFirstRunFlag(true);
           log("Logging Out");
           Navigator.of(context).pushNamedAndRemoveUntil(

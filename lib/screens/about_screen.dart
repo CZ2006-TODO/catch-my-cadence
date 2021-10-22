@@ -9,7 +9,7 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(
-        // Back arrow that returns to MainScreen
+        // Back arrow that returns to MainScreen.
         leading: IconButton(
             onPressed: () {
               Navigator.of(ctx).pop();
