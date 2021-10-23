@@ -30,11 +30,9 @@ class MainScreen extends StatelessWidget {
 class _MainScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    // Allows to hold multiple models.
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (ctx) => SpotifyControllerModel(ctx)),
-      ],
+    return ChangeNotifierProvider(
+      create: (ctx) => SpotifyControllerModel(ctx),
+      lazy: false,
       builder: (context, child) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,

@@ -22,8 +22,7 @@ class CadencePedometerModel {
   CadencePedometerModel() {
     // Initialise the starting state for the model.
     _setInactiveState();
-
-    // _timer not set up as initially, cadence is not calculated.
+    // Initialise the StepCount stream (only happens once).
     _setUpCountStream();
   }
 
@@ -41,14 +40,10 @@ class CadencePedometerModel {
     });
   }
 
-  // _setInactiveState : Put model into inactive state.
-  // This resets calculation variables to 0, stops the periodic timer,
-  // and empties the cadence queue.
-  void _setInactiveState() {
-    _numSteps = _startTime = 0;
-    _isActive = false;
-    _timer?.cancel();
-    _cadences.clear();
+  // start : Start cadence calculation.
+  void start() {
+    log("Active state has been set to true, preparing for cadence calculation...");
+    _setActiveState();
   }
 
   // _setActiveState : Put model into active state.
@@ -69,7 +64,7 @@ class CadencePedometerModel {
   void _setUpTimer() {
     // This periodic timer updates the current cadence when calculation is active.
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      int timeDifference = this.timeElapsed;
+      int timeDifference = this._timeElapsed;
       if (timeDifference <= 0) {
         return;
       }
@@ -82,35 +77,42 @@ class CadencePedometerModel {
       if (_cadences.length > _queueSize) {
         _cadences.removeFirst();
       }
-      log("$_cadences -> ${this.cadence}");
+      log("$_cadences <-: ${this.cadence}");
     });
   }
 
-  void start() {
-    log("Active state has been set to true, preparing for cadence calculation...");
-    _setActiveState();
-  }
-
+  // stop : Stop cadence calculation.
   void stop() {
     log("Active state has been set to false, resetting...");
     _setInactiveState();
   }
 
-  // Getters
-  int get steps {
-    return _numSteps;
+  // _setInactiveState : Put model into inactive state.
+  // This resets calculation variables to 0, stops the periodic timer,
+  // and empties the cadence queue.
+  void _setInactiveState() {
+    _numSteps = _startTime = 0;
+    _isActive = false;
+    _timer?.cancel();
+    _cadences.clear();
   }
 
+  // cadence : The current cadence calculated by the model.
   int get cadence {
     int total = _cadences.fold(0, (prev, next) => prev + next);
     return (total == 0) ? 0 : (total / _cadences.length).round();
   }
 
+  // isActive : Whether the model is actively calculating the cadence.
   bool get isActive {
     return _isActive;
   }
 
-  int get timeElapsed {
+  // _timeElapsed : Calculates the time since start of cadence calculation.
+  int get _timeElapsed {
+    if (!_isActive) {
+      return 0;
+    }
     var now = DateTime.now().millisecondsSinceEpoch;
     var diff = now - _startTime;
     // Needed due to start time error correction. See _setActiveState.
