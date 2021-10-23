@@ -1,4 +1,4 @@
-package com.todo.test
+package com.todo.catchmycadence
 
 import io.flutter.embedding.android.FlutterActivity
 

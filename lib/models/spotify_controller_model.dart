@@ -34,6 +34,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // Keeps track if the user wants songs to play songs.
   late bool _isActive;
+  Timer? _finder; // Delayed runner to find new song.
 
   // Used by the SpotifyControllerModel to search for songs.
   late CadencePedometerModel _cadenceModel;
@@ -109,7 +110,7 @@ class SpotifyControllerModel with ChangeNotifier {
   // 1. Continuously calculate cadence
   // 2. Find songs to play with calculated cadence.
   // This will repeat until the user puts the model to inactive state.
-  void _setActiveState() async {
+  void _setActiveState() {
     _isActive = true;
 
     // Set up a new periodic player state checker.
@@ -122,34 +123,54 @@ class SpotifyControllerModel with ChangeNotifier {
     });
 
     // Initialises a loop for the model to calculate cadence and play songs.
-    await _findAndPlaySong();
+    _findAndPlaySong();
   }
 
   // ---------------------------------------------------------------------------
   Future<void> _findAndPlaySong() async {
     // Calculate cadence with sample time of 10 seconds.
     int cadence = await _cadenceModel.calculateCadence(10);
+    if (!_isActive) {
+      return;
+    }
 
     // Use calculated cadence to find songs.
     List<TempoSong> songs = await GetSongBPMModel.getSongs(cadence);
+    if (!_isActive) {
+      return;
+    }
 
     // Select a random song from the list.
     TempoSong selectedSong = songs[_random.nextInt(songs.length)];
     // Once we select this song, then we find the Spotify URI for this song.
     final uri = await _getTrackSpotifyURI(selectedSong);
+    if (!_isActive) {
+      return;
+    }
 
     // Play the required song!
     SpotifySdk.play(spotifyUri: uri);
+    if (!_isActive) {
+      return;
+    }
 
     // Set up a future that will find the next song.
     // Get current player state.
     _lastState = await SpotifySdk.getPlayerState();
+    if (!_isActive) {
+      return;
+    }
+
     // Start finding the next song a few seconds before the end of the current
     // song.
-    final before = 17;
-    int delay =
-        _lastState!.track!.duration - Duration(seconds: before).inMilliseconds;
-    Future.delayed(Duration(milliseconds: delay), () {
+    final before = 15;
+    int wait = _lastState!.track!.duration -
+        Duration(seconds: before).inMilliseconds;
+    if (!_isActive) {
+      return;
+    }
+
+    _finder = Timer(Duration(milliseconds: wait), () {
       _findAndPlaySong();
     });
   }
@@ -157,8 +178,8 @@ class SpotifyControllerModel with ChangeNotifier {
   Future<String> _getTrackSpotifyURI(TempoSong song) async {
     final searchString = "${song.songTitle} ${song.artist.name}";
     var search = await _spotify.search
-        .get(searchString, types: [SearchType.track])
-        .first(1)
+        .get(searchString, types: [SearchType.track]) // Do the search
+        .first(1) // Get the first 1 page(s) of results.
         .catchError((err) {
           print((err as SpotifyException).message);
         });
@@ -172,12 +193,12 @@ class SpotifyControllerModel with ChangeNotifier {
     }
     return "";
   }
-  // ---------------------------------------------------------------------------
 
   // _setInactiveState : Sets the model to inactive state.
-  // This will also stop the playerStateUpdater.
+  // This will also stop the playerStateUpdater and cancels any upcoming searches.
   void _setInactiveState() {
     _isActive = false;
+    _finder?.cancel();
     // Stop the player state checker.
     _playerStateUpdater?.cancel();
     // Also stop playing any song that is being played.
