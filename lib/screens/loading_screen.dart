@@ -56,21 +56,27 @@ class _LoadingScreenState extends State<LoadingScreen>
     log("Activity Recognition Permission not granted, requesting...");
     showDialog(
       context: context,
-      builder: (c) => AlertDialog(
-        title: Text("Activity Recognition Permission"),
-        content: Text(
-            "Whoops! It looks like you are missing the required permissions "
-            "to let the pedometer work.\n\nPlease grant it!"),
-        actions: [
-          TextButton(
-            child: Text("Open Settings"),
-            onPressed: () {
-              Navigator.of(c).pop();
-              openAppSettings();
-            },
-          )
-        ],
-      ),
+      builder: (c) {
+        return WillPopScope(
+          onWillPop: () => Future.value(false),
+          child: AlertDialog(
+            title: Text("Permissions Required"),
+            content: Text(
+                "The 'Physical Activity' permission is required for the app to "
+                    "perform properly.\n\n"
+                    "Please enable it in settings!"),
+            actions: [
+              TextButton(
+                child: Text("Open Settings"),
+                onPressed: () {
+                  Navigator.of(c).pop();
+                  openAppSettings();
+                },
+              )
+            ],
+          ),
+        );
+      },
       barrierDismissible: false,
     );
   }
