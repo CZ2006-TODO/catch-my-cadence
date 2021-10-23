@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:catch_my_cadence/config.dart';
 import 'package:catch_my_cadence/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +26,7 @@ class SideMenu extends StatelessWidget {
         _aboutOption(context),
         _helpOption(context),
         _settingsOption(context),
+        _logoutOption(context)
       ]),
     );
   }
@@ -86,7 +90,7 @@ class SideMenu extends StatelessWidget {
           Icons.info,
         ),
         onTap: () {
-          // Pops all screens from view stack until AboutScreen is at the top of the stack.
+          // Pop SideMenu and push AboutScreen.
           Navigator.of(context)
               .popAndPushNamed(RouteDelegator.ABOUT_SCREEN_ROUTE);
         });
@@ -111,15 +115,37 @@ class SideMenu extends StatelessWidget {
   // _settingsOption : Routes user to SettingsScreen.
   ListTile _settingsOption(BuildContext context) {
     return ListTile(
-      title: Text(
-        'Settings',
-      ),
-      leading: Icon(
-        Icons.settings,
-      ),
-      // onTap:(){
-      // TODO: Link to settings screen
-      // }
-    );
+        title: Text(
+          'Settings',
+        ),
+        leading: Icon(
+          Icons.settings,
+        ),
+        onTap: () {
+          // Pop SideMenu and push SettingsScreen.
+          Navigator.of(context)
+              .popAndPushNamed(RouteDelegator.SETTINGS_SCREEN_ROUTE);
+        });
+  }
+
+  // _LogoutOption : Routes the user to LoggedOutScreen.
+  ListTile _logoutOption(BuildContext context) {
+    return ListTile(
+        title: Text(
+          'Log Out',
+        ),
+        leading: Icon(
+          Icons.logout,
+        ),
+        onTap: () {
+          // Sets firstRunFlag to true.
+          Config.firstRunFlag = true;
+          log("Logging Out");
+          // "Restart" app by removing all screens from the stack
+          // and loading the LoadingScreen again.
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              RouteDelegator.LOADING_SCREEN_ROUTE,
+              (Route<dynamic> route) => false);
+        });
   }
 }

@@ -39,7 +39,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     if (!(await Permission.activityRecognition.isGranted)) {
       _requestActivityRecognitionPermission();
     } else {
-      bool firstRun = await Config.getFirstRunFlag();
+      bool firstRun = Config.firstRunFlag;
       log("First run status: $firstRun");
 
       // Navigate to required screen based on flag.
