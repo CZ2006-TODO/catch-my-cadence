@@ -1,13 +1,7 @@
-import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
-import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
-import 'package:catch_my_cadence/models/media_controller_model.dart';
-import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
-import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 // MainScreen is the screen that the user will see after confirming connection
 // with Spotify.
@@ -40,71 +34,40 @@ class _MainScreenBody extends StatefulWidget {
 }
 
 class _MainScreenBodyState extends State<_MainScreenBody> {
-  late CadencePedometerModel _cadenceModel;
-  late GetSongBPMModel _bpmModel;
   late SpotifyControllerModel _spotifyModel;
-  late MediaPlayerController _mediaModel;
 
   @override
   void initState() {
     super.initState();
     _spotifyModel = SpotifyControllerModel(context);
-    _cadenceModel = CadencePedometerModel();
-    _bpmModel = GetSongBPMModel();
-    _mediaModel = MediaPlayerController();
   }
 
   @override
   Widget build(BuildContext ctx) {
     // Allows to hold multiple models.
     return MultiProvider(
-      // TODO : The interaction between models has not been finalised.
       providers: [
-        ChangeNotifierProvider.value(value: _cadenceModel),
-        ChangeNotifierProvider.value(value: _mediaModel),
-        Provider.value(value: _bpmModel),
-        Provider.value(value: _spotifyModel),
+        ChangeNotifierProvider<SpotifyControllerModel>.value(
+            value: _spotifyModel),
       ],
-      child: mainWidgets(),
+      child: Center(
+        child: widgets(),
+      ),
     );
   }
 
-  Widget mainWidgets() {
-    return Center(child:
-        Consumer<CadencePedometerModel>(builder: (context, cpModel, child) {
-      // These widgets are always built.
-      List<Widget> widgets = [
-        ElevatedButton(
-          child: Text(cpModel.isActive ? "Stop" : "Start"),
-          // TODO : Hong Xiang add your previous change here.
-          // IMO, having a conditional check here for starting and stopping
-          // means we are doing something wrong. Ideally one model should have
-          // a toggle method that will start and stop the whole process.
-          // CadencePedometerModel doesn't seem like the right model for that.
-          // Maybe SpotifyController will have a toggle? idk.
-          onPressed: () => cpModel.toggleStatus(),
-        ),
-        CadencePedometerWidget(
-          cadenceActive: cpModel.isActive,
-          steps: cpModel.steps,
-          cadence: cpModel.cadence,
-        )
-      ];
-      // Add this only if the cpMpdel is active and time elapsed > 3s.
-      if (cpModel.isActive &&
-          cpModel.timeElapsed > Duration(seconds: 3).inMilliseconds) {
-        widgets.add(Spacer());
-        widgets.add(Align(
-          alignment: Alignment.bottomCenter,
-          // NOTE : Error when trying to get from existing stream. No idea why!
-          // TODO : Change this.
-          child: MediaPlayerWidget(SpotifySdk.subscribePlayerState()),
-        ));
-      }
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: widgets,
-      );
-    }));
+  Widget widgets() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Consumer<SpotifyControllerModel>(
+            builder: (context, spotifyModel, child) {
+          return ElevatedButton(
+            child: Text(spotifyModel.isActive ? "Stop" : "Start"),
+            onPressed: () => spotifyModel.toggleStatus(),
+          );
+        }),
+      ],
+    );
   }
 }

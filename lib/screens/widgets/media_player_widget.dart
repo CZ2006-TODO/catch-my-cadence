@@ -1,4 +1,3 @@
-import 'package:catch_my_cadence/models/media_controller_model.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
@@ -40,21 +39,11 @@ class MediaPlayerWidget extends StatelessWidget {
               SizedBox(height: 10),
               // Controls
               TextButton(
-                  onPressed: () => playerState.isPaused
-                      ? MediaPlayerController.resume()
-                      : MediaPlayerController.pause(),
+                  onPressed: () {},
                   child: Icon(
                     playerState.isPaused ? Icons.play_arrow : Icons.pause,
                   )),
               SizedBox(height: 10),
-              // Change song?
-              // TODO : Fix lagginess (potential mem leak)?
-              TextButton(
-                  onPressed: () {
-                    MediaPlayerController.playByBPM(80);
-                  },
-                  //TODO: Remove eventually. This eyesore is here for testing only.
-                  child: Icon(Icons.money)),
             ],
           );
         });
