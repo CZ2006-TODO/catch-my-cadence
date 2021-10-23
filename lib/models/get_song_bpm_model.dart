@@ -16,7 +16,7 @@ class GetSongBPMModel {
     'Accept': 'application/json',
   };
 
-  // getSongs: Returns a list of songs with a given BPM.
+  // getSongs : Returns a list of songs with a given BPM.
   static Future<List<TempoSong>> getSongs(int bpm) async {
     log("Getting songs of BPM $bpm");
     final queryParams = {
