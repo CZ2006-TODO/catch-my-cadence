@@ -13,7 +13,7 @@ class MediaPlayerWidget extends StatelessWidget {
     if (this._state == null || track == null) {
       return Center(
         child: Container(
-          child: Text("Not "),
+          child: Text("Not active!"),
         ),
       );
     }

@@ -40,22 +40,19 @@ class _MainScreenBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Consumer<SpotifyControllerModel>(
-              builder: (context, spotifyModel, child) {
-                return ElevatedButton(
-                  child: Text(spotifyModel.isActive ? "Stop" : "Start"),
-                  onPressed: () => spotifyModel.toggleStatus(),
-                );
-              }
-            ),
+                builder: (context, spotifyModel, child) {
+              return ElevatedButton(
+                child: Text(spotifyModel.isActive ? "Stop" : "Start"),
+                onPressed: () => spotifyModel.toggleStatus(),
+              );
+            }),
             Spacer(),
             Consumer<SpotifyControllerModel>(
-              builder: (context, spotifyModel, child) {
-                return Align(
-                  alignment : Alignment.bottomCenter,
-                  child: MediaPlayerWidget(spotifyModel.playerState)
-                );
-              }
-            ),
+                builder: (context, spotifyModel, child) {
+              return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: MediaPlayerWidget(spotifyModel.playerState));
+            }),
           ],
         );
       },
