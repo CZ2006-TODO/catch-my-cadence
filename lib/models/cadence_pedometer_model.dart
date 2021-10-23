@@ -97,6 +97,20 @@ class CadencePedometerModel {
     _cadences.clear();
   }
 
+  // calculateCadence : Calculates a cadence from sampling within a specified
+  // time frame (in seconds).
+  Future<int> calculateCadence(int seconds) async {
+    // Start the calculation.
+    this.start();
+    // Wait for the specified number of seconds.
+    await Future.delayed(Duration(seconds: seconds));
+    // Sample the current cadence.
+    int cadence = this.cadence;
+    // Stop the calculation.
+    this.stop();
+    return cadence;
+  }
+
   // cadence : The current cadence calculated by the model.
   int get cadence {
     int total = _cadences.fold(0, (prev, next) => prev + next);

@@ -23,6 +23,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // Miscellaneous requirements.
   late final BuildContext _ctx;
+  late final math.Random _random;
 
   // For ensuring connection to Spotify app.
   late Stream<ConnectionStatus> _connectionStream;
@@ -39,6 +40,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   SpotifyControllerModel(BuildContext ctx) {
     this._ctx = ctx;
+    this._random = math.Random();
 
     // Initialise required connections to Spotify app.
     _setUpSpotifyConnection();
@@ -125,43 +127,41 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // ---------------------------------------------------------------------------
   Future<void> _findAndPlaySong() async {
-    // Start cadence calculation.
-    _cadenceModel.start();
-    // Wait for 10 seconds to get an accurate reading of the cadence.
-    await Future.delayed(Duration(seconds: 10));
-    int calculatedCadence = _cadenceModel.cadence;
-    _cadenceModel.stop(); // Remember to stop the CadencePedometerModel.
+    // Calculate cadence with sample time of 10 seconds.
+    int cadence = await _cadenceModel.calculateCadence(10);
 
     // Use calculated cadence to find songs.
-    List<TempoSong> songs = await GetSongBPMModel.getSongs(calculatedCadence);
+    List<TempoSong> songs = await GetSongBPMModel.getSongs(cadence);
 
     // Select a random song from the list.
-    final random = math.Random();
-    TempoSong selectedSong = songs[random.nextInt(songs.length)];
-
+    TempoSong selectedSong = songs[_random.nextInt(songs.length)];
     // Once we select this song, then we find the Spotify URI for this song.
-    final spotifyUri = await _searchTrackByTitle(selectedSong);
+    final uri = await _getTrackSpotifyURI(selectedSong);
 
-    SpotifySdk.play(spotifyUri: spotifyUri);
+    // Play the required song!
+    SpotifySdk.play(spotifyUri: uri);
 
     // Set up a future that will find the next song.
     // Get current player state.
     _lastState = await SpotifySdk.getPlayerState();
+    // Start finding the next song a few seconds before the end of the current
+    // song.
+    final before = 17;
     int delay =
-        _lastState!.track!.duration - Duration(seconds: 17).inMilliseconds;
+        _lastState!.track!.duration - Duration(seconds: before).inMilliseconds;
     Future.delayed(Duration(milliseconds: delay), () {
       _findAndPlaySong();
     });
   }
 
-  Future<String> _searchTrackByTitle(TempoSong song) async {
+  Future<String> _getTrackSpotifyURI(TempoSong song) async {
     final searchString = "${song.songTitle} ${song.artist.name}";
     var search = await _spotify.search
         .get(searchString, types: [SearchType.track])
         .first(1)
         .catchError((err) {
-      print((err as SpotifyException).message);
-    });
+          print((err as SpotifyException).message);
+        });
 
     var firstPage = search.first;
     var firstTrack = firstPage.items?.first;
