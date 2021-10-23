@@ -26,13 +26,10 @@ class Config {
         fallback: "read_song_bpm_api_err");
   }
 
-  // getFirstRunFlag : Checks if the user has opened the app before or not.
-  // If the user is running the app for the first time, return true, else false.
   static bool get firstRunFlag {
     return prefs.getBool(_firstRunFlag) ?? true;
   }
 
-  // setFirstRunFlag : Sets the first run flag to required value.
   static set firstRunFlag(bool flag) {
     prefs.setBool(_firstRunFlag, flag);
   }

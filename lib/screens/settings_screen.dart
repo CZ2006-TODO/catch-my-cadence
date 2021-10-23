@@ -1,6 +1,8 @@
 import 'package:catch_my_cadence/config.dart';
 import 'package:flutter/material.dart';
 
+// SettingsScreen allows user to change toggle dark theme within the app
+// It is accessible via side menu options.
 class SettingsScreen extends StatefulWidget {
   SettingsScreen({Key? key}) : super(key: key);
 
@@ -8,8 +10,6 @@ class SettingsScreen extends StatefulWidget {
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
-// SettingsScreen allows user to change toggle dark theme within the app
-// It is accessible via side menu options.
 class _SettingsScreenState extends State<SettingsScreen> {
   late bool _isDarkMode;
 
