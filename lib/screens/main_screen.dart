@@ -1,4 +1,5 @@
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
+import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,48 +27,38 @@ class MainScreen extends StatelessWidget {
 
 // _MainScreenBody is the widget that acts as the main body of the main screen.
 // This widget contains all the necessary data models.
-class _MainScreenBody extends StatefulWidget {
-  const _MainScreenBody({Key? key}) : super(key: key);
-
-  @override
-  _MainScreenBodyState createState() => _MainScreenBodyState();
-}
-
-class _MainScreenBodyState extends State<_MainScreenBody> {
-  late SpotifyControllerModel _spotifyModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _spotifyModel = SpotifyControllerModel(context);
-  }
-
+class _MainScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     // Allows to hold multiple models.
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<SpotifyControllerModel>.value(
-            value: _spotifyModel),
+        ChangeNotifierProvider(create: (ctx) => SpotifyControllerModel(ctx)),
       ],
-      child: Center(
-        child: widgets(),
-      ),
-    );
-  }
-
-  Widget widgets() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Consumer<SpotifyControllerModel>(
-            builder: (context, spotifyModel, child) {
-          return ElevatedButton(
-            child: Text(spotifyModel.isActive ? "Stop" : "Start"),
-            onPressed: () => spotifyModel.toggleStatus(),
-          );
-        }),
-      ],
+      builder: (context, child) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Consumer<SpotifyControllerModel>(
+              builder: (context, spotifyModel, child) {
+                return ElevatedButton(
+                  child: Text(spotifyModel.isActive ? "Stop" : "Start"),
+                  onPressed: () => spotifyModel.toggleStatus(),
+                );
+              }
+            ),
+            Spacer(),
+            Consumer<SpotifyControllerModel>(
+              builder: (context, spotifyModel, child) {
+                return Align(
+                  alignment : Alignment.bottomCenter,
+                  child: MediaPlayerWidget(spotifyModel.playerState)
+                );
+              }
+            ),
+          ],
+        );
+      },
     );
   }
 }
