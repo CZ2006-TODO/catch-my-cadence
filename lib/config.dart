@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Config {
   // Private
   static final String _firstRunFlag = "first_run";
+  static final String _darkModeFlag = "dark_mode";
+
+  static late SharedPreferences prefs;
 
   // Public
   static String get clientId {
@@ -24,15 +28,29 @@ class Config {
 
   // getFirstRunFlag : Checks if the user has opened the app before or not.
   // If the user is running the app for the first time, return true, else false.
-  static Future<bool> getFirstRunFlag() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  static bool get firstRunFlag {
     return prefs.getBool(_firstRunFlag) ?? true;
   }
 
   // setFirstRunFlag : Sets the first run flag to required value.
-  static Future<void> setFirstRunFlag(bool flag) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  static set firstRunFlag(bool flag) {
     prefs.setBool(_firstRunFlag, flag);
+  }
+
+  static bool get isDarkMode {
+    return prefs.getBool(_darkModeFlag) ?? false;
+  }
+
+  static set isDarkMode(bool flag) {
+    prefs.setBool(_darkModeFlag, flag);
+  }
+
+  static ThemeData getTheme() {
+    var theme = (isDarkMode) ? ThemeData.dark() : ThemeData.light();
+    return theme.copyWith(
+        pageTransitionsTheme: PageTransitionsTheme(builders: {
+      TargetPlatform.android: ZoomPageTransitionsBuilder(),
+    }));
   }
 
   // loadSecrets : Attempts to load the client ID and redirect URI associated

@@ -1,10 +1,23 @@
-import 'package:catch_my_cadence/screens/widgets/theme_button_widget.dart';
+import 'package:catch_my_cadence/config.dart';
 import 'package:flutter/material.dart';
+
+class SettingsScreen extends StatefulWidget {
+  SettingsScreen({Key? key}) : super(key: key);
+
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
 
 // SettingsScreen allows user to change toggle dark theme within the app
 // It is accessible via side menu options.
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+class _SettingsScreenState extends State<SettingsScreen> {
+  late bool _isDarkMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = Config.isDarkMode;
+  }
 
   @override
   Widget build(BuildContext ctx) {
@@ -21,11 +34,26 @@ class SettingsScreen extends StatelessWidget {
       // theme_button_widget
       body: Padding(
         padding: EdgeInsets.all(10),
-        child: ListTile(
-            leading: Icon(Icons.dark_mode),
-            title: Text('Dark Mode'),
-            trailing: ThemeButtonWidget()),
+        child: options(),
       ),
+    );
+  }
+
+  ListView options() {
+    return ListView(
+      children: [
+        // Change theme option
+        SwitchListTile.adaptive(
+            value: _isDarkMode,
+            title: Text("Dark Mode"),
+            subtitle: Text("Restart the app to view changes."),
+            onChanged: (val) {
+              Config.isDarkMode = val;
+              setState(() {
+                _isDarkMode = val;
+              });
+            })
+      ],
     );
   }
 }

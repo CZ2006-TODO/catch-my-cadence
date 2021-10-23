@@ -15,7 +15,7 @@ class ConfirmConnectionScreen extends StatelessWidget {
   Future<void> confirmSpotifyLinkage(BuildContext ctx) async {
     // Set first run flag to false.
     log("Setting first run flag to false...");
-    await Config.setFirstRunFlag(false);
+    Config.firstRunFlag = false;
 
     // Navigate to main screen.
     Navigator.of(ctx).pushReplacementNamed(RouteDelegator.MAIN_SCREEN_ROUTE);
