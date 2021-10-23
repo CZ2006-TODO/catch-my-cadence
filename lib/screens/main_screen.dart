@@ -37,6 +37,7 @@ class _MainScreenBody extends StatelessWidget {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            // Toggle button.
             Consumer<SpotifyControllerModel>(
                 builder: (context, spotifyModel, child) {
               return ElevatedButton(
@@ -44,7 +45,10 @@ class _MainScreenBody extends StatelessWidget {
                 onPressed: () => spotifyModel.toggleStatus(),
               );
             }),
+            // TODO : Add more widgets here.
+            // Spacer so the MediaPlayerWidget will be at the bottom.
             Spacer(),
+            // MediaPlayerWidget.
             Consumer<SpotifyControllerModel>(
                 builder: (context, spotifyModel, child) {
               return Align(

@@ -63,8 +63,8 @@ class _LoadingScreenState extends State<LoadingScreen>
             title: Text("Permissions Required"),
             content: Text(
                 "The 'Physical Activity' permission is required for the app to "
-                    "perform properly.\n\n"
-                    "Please enable it in settings!"),
+                "perform properly.\n\n"
+                "Please enable it in settings!"),
             actions: [
               TextButton(
                 child: Text("Open Settings"),

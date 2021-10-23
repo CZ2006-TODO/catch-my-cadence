@@ -8,6 +8,7 @@ import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/screens/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
@@ -20,6 +21,9 @@ class SpotifyControllerModel with ChangeNotifier {
   // For interfacing with Spotify Web API.
   static final _spotify =
       SpotifyApi(SpotifyApiCredentials(Config.clientId, Config.clientSecret));
+
+  // Looping
+  static final _loopThreshold = 15;
 
   // Miscellaneous requirements.
   late final BuildContext _ctx;
@@ -34,7 +38,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // Keeps track if the user wants songs to play songs.
   late bool _isActive;
-  Timer? _finder; // Delayed runner to find new song.
+  late bool _hasStartedFind; // Flag to check if app already finding new song
 
   // Used by the SpotifyControllerModel to search for songs.
   late CadencePedometerModel _cadenceModel;
@@ -110,24 +114,54 @@ class SpotifyControllerModel with ChangeNotifier {
   // 1. Continuously calculate cadence
   // 2. Find songs to play with calculated cadence.
   // This will repeat until the user puts the model to inactive state.
-  void _setActiveState() {
+  Future<void> _setActiveState() async {
     _isActive = true;
+    _performPlayLoop();
+  }
+
+  // _performPlayLoop : This function sets up a looping "state machine" for the
+  // model such that it attempts to find a new song everytime the current song
+  // is about to end.
+  Future<void> _performPlayLoop() async {
+    await _calculateCadenceAndPlaySong();
 
     // Set up a new periodic player state checker.
     // Required since SpotifySdk.subscribePlayerState is not regularly updated.
     // https://github.com/brim-borium/spotify_sdk/issues/13
     // Helps to update the player state every 1 second.
-    _playerStateUpdater = Timer.periodic(Duration(seconds: 1), (_) async {
+
+    // Cancel the previous timer.
+    _playerStateUpdater?.cancel();
+    _playerStateUpdater = Timer.periodic(Duration(seconds: 1), (timer) async {
+      // Update PlayerState.
       _lastState = await SpotifySdk.getPlayerState();
       notifyListeners();
-    });
+      var state = _lastState;
 
-    // Initialises a loop for the model to calculate cadence and play songs.
-    _findAndPlaySong();
+      // We check how much time is left. If the song is finishing, then we
+      // have to start finding a new song.
+      var track = state?.track;
+      if (state == null || track == null) {
+        return;
+      }
+
+      // Get time to end of song.
+      int timeLeft = track.duration - state.playbackPosition;
+      if (Duration(milliseconds: timeLeft).inSeconds < _loopThreshold &&
+          !_hasStartedFind) {
+        _hasStartedFind = true;
+        Fluttertoast.showToast(
+            msg: "Finding new song...",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM);
+        _performPlayLoop();
+      }
+    });
   }
 
-  // ---------------------------------------------------------------------------
-  Future<void> _findAndPlaySong() async {
+  // _calculateCadenceAndPlaySong : Calculates the current cadence
+  // and plays a song matching that cadence.
+  Future<void> _calculateCadenceAndPlaySong() async {
     // Calculate cadence with sample time of 10 seconds.
     int cadence = await _cadenceModel.calculateCadence(10);
     if (!_isActive) {
@@ -150,29 +184,12 @@ class SpotifyControllerModel with ChangeNotifier {
 
     // Play the required song!
     SpotifySdk.play(spotifyUri: uri);
-    if (!_isActive) {
-      return;
-    }
-
-    // Set up a future that will find the next song.
-    // Get current player state.
-    _lastState = await SpotifySdk.getPlayerState();
-    if (!_isActive) {
-      return;
-    }
-
-    // Start finding the next song a few seconds before the end of the current
-    // song.
-    final before = 15;
-    int wait = _lastState!.track!.duration -
-        Duration(seconds: before).inMilliseconds;
-    if (!_isActive) {
-      return;
-    }
-
-    _finder = Timer(Duration(milliseconds: wait), () {
-      _findAndPlaySong();
-    });
+    Fluttertoast.showToast(
+      msg: "Playing '${selectedSong.songTitle}' with BPM ${selectedSong.tempo}",
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+    );
+    _hasStartedFind = false;
   }
 
   Future<String> _getTrackSpotifyURI(TempoSong song) async {
@@ -197,8 +214,7 @@ class SpotifyControllerModel with ChangeNotifier {
   // _setInactiveState : Sets the model to inactive state.
   // This will also stop the playerStateUpdater and cancels any upcoming searches.
   void _setInactiveState() {
-    _isActive = false;
-    _finder?.cancel();
+    _isActive = _hasStartedFind = false;
     // Stop the player state checker.
     _playerStateUpdater?.cancel();
     // Also stop playing any song that is being played.
