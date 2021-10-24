@@ -1,6 +1,11 @@
-# Catch My Cadence
+# <p align="center">Catch My Cadence</p>
+<p align="center">
+  An application that plays songs with a BPM matching your walking/running cadence.
+</p>
 
-An application that plays songs with a BPM matching your walking/running cadence.
+<p align="center">
+  <img src=".github/assets/demo.gif" alt="demo.gif" height="600px">
+</p>
 
 ## Getting Started
 Minimal steps to run this application.
