@@ -11,15 +11,13 @@ Minimal steps to run this application.
 $ flutter pub get
 $ flutter pub upgrade
 ```
+  - Optionally, run `flutter upgrade` to make sure your Flutter runtime is up to date.
 
 3. Set up your `/assets/secrets.env` file. You may look at the example `.env` file provided for more
 information.
 
 ## TODO list
-1. Add misc. screens (AboutScreen, HelpScreen etc.)
-2. Add functionality to SpotifyControllerModel
-3. Data links and communication between models (hard).
-4. Unit testing.
+1. Testing
 
 ## General Guidelines
 1. Try to `flutter pub upgrade` before you commit to keep your dependencies and those in the repo
