@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:catch_my_cadence/config.dart';
@@ -184,8 +185,16 @@ class SpotifyControllerModel with ChangeNotifier {
     notifyListeners();
 
     // Use calculated cadence to find songs.
-    List<TempoSong> songs = await GetSongBPMModel.getSongs(cadence);
-    if (!_isActive) {
+    List<TempoSong> songs;
+    try {
+      songs = await GetSongBPMModel.getSongs(cadence);
+      if (!_isActive) {
+        return;
+      }
+    } on HttpException catch (_) {
+      // Error getting a song, so stop everything.
+      this._setInactiveState();
+      notifyListeners();
       return;
     }
 
