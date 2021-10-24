@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
+import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
@@ -27,15 +28,16 @@ class SpotifyControllerModel with ChangeNotifier {
   static final _loopThreshold = 15;
 
   // Miscellaneous requirements.
-  final BuildContext _ctx;
+  BuildContext _ctx;
   final math.Random _random = math.Random();
 
   // For ensuring connection to Spotify app.
   late Stream<ConnectionStatus> _connectionStream;
 
-  // For checking player status.
+  // Player status.
   Timer? _playerStateUpdater;
   PlayerState? _lastState;
+  ImageUri? _imageUri;
 
   // Keeps track if the user wants songs to play songs.
   bool _isActive = false;
@@ -155,6 +157,12 @@ class SpotifyControllerModel with ChangeNotifier {
         return;
       }
 
+      // Check for change in image.
+      if (this._imageUri?.raw != track.imageUri.raw) {
+        _imageUri = track.imageUri;
+        notifyListeners();
+      }
+
       // Get time to end of song.
       int timeLeft = track.duration - state.playbackPosition;
       if (Duration(milliseconds: timeLeft).inSeconds < _loopThreshold &&
@@ -245,6 +253,7 @@ class SpotifyControllerModel with ChangeNotifier {
     _playerStateUpdater?.cancel();
     // Reset last PlayerState
     _lastState = null;
+    _imageUri = null;
     // Reset cadence values
     _cadenceStatus = "Inactive";
     _cadenceValue = "-";
@@ -260,6 +269,11 @@ class SpotifyControllerModel with ChangeNotifier {
   // playerState : Gets the latest player state returned from the Spotify app.
   PlayerState? get playerState {
     return this._lastState;
+  }
+
+  // imageData : Gets image data of current playing song.
+  ImageUri? get imageUri {
+    return this._imageUri;
   }
 
   // cadenceValue : Gets the latest cadence value calculated.
