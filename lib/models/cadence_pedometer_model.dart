@@ -11,13 +11,14 @@ class CadencePedometerModel {
   static const _queueSize = 5;
 
   // Data streams
-  ListQueue<int> _cadences = ListQueue(_queueSize); // Holds past cadences.
-  late Stream<StepCount> _stepCountStream;
+  final ListQueue<int> _cadences =
+      ListQueue(_queueSize); // Holds past cadences.
+  final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
   Timer? _timer;
 
-  late int _numSteps; // Number of steps from start.
-  late bool _isActive; // Whether cadence is being calculated
-  late int _startTime; // Milliseconds from epoch of start.
+  int _numSteps = 0; // Number of steps from start.
+  bool _isActive = false; // Whether cadence is being calculated
+  int _startTime = 0; // Milliseconds from epoch of start.
 
   CadencePedometerModel() {
     // Initialise the starting state for the model.
@@ -30,7 +31,6 @@ class CadencePedometerModel {
   void _setUpCountStream() {
     // This step stream adds one to the current step count when
     // calculation is active, then notifies.
-    _stepCountStream = Pedometer.stepCountStream;
     _stepCountStream.listen((StepCount event) {
       if (_isActive) {
         _numSteps += 1;

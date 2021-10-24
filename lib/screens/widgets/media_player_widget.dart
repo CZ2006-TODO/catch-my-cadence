@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spotify_sdk/models/player_state.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 
 class MediaPlayerWidget extends StatelessWidget {
   late final PlayerState? _state;
@@ -12,8 +13,20 @@ class MediaPlayerWidget extends StatelessWidget {
 
     if (this._state == null || track == null) {
       return Center(
-        child: Container(
-          child: Text("Not active!"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              "Not playing any songs matching your cadence.\n",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            Text(
+              "Press the 'Start' button to discover something special!",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyText2,
+            ),
+          ],
         ),
       );
     }
@@ -38,7 +51,9 @@ class MediaPlayerWidget extends StatelessWidget {
         SizedBox(height: 10),
         // Controls
         TextButton(
-            onPressed: () {},
+            onPressed: () {
+              this._state!.isPaused ? SpotifySdk.resume() : SpotifySdk.pause();
+            },
             child: Icon(
               this._state!.isPaused ? Icons.play_arrow : Icons.pause,
             )),

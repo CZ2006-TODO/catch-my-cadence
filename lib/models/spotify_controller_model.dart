@@ -26,8 +26,8 @@ class SpotifyControllerModel with ChangeNotifier {
   static final _loopThreshold = 15;
 
   // Miscellaneous requirements.
-  late final BuildContext _ctx;
-  late final math.Random _random;
+  final BuildContext _ctx;
+  final math.Random _random = math.Random();
 
   // For ensuring connection to Spotify app.
   late Stream<ConnectionStatus> _connectionStream;
@@ -41,17 +41,15 @@ class SpotifyControllerModel with ChangeNotifier {
   bool _hasStartedFind = false; // Flag to check if app already finding new song
 
   // Used by the SpotifyControllerModel to search for songs.
-  late CadencePedometerModel _cadenceModel;
+  final CadencePedometerModel _cadenceModel = CadencePedometerModel();
 
-  SpotifyControllerModel(BuildContext ctx) {
-    this._ctx = ctx;
-    this._random = math.Random();
+  // Cadence data
+  String _cadenceValue = "-";
+  String _cadenceStatus = "Inactive";
 
+  SpotifyControllerModel(this._ctx) {
     // Initialise required connections to Spotify app.
     _setUpSpotifyConnection();
-
-    // Initialise the CadencePedometerModel.
-    _cadenceModel = CadencePedometerModel();
   }
 
   // _setUpSpotifyConnection : Attempts to connect to the Spotify app
@@ -173,11 +171,17 @@ class SpotifyControllerModel with ChangeNotifier {
   // _calculateCadenceAndPlaySong : Calculates the current cadence
   // and plays a song matching that cadence.
   Future<void> _calculateCadenceAndPlaySong() async {
+    _cadenceStatus = "Calculating...";
+    _cadenceValue = "Polling...";
+    notifyListeners();
     // Calculate cadence with sample time of 10 seconds.
     int cadence = await _cadenceModel.calculateCadence(10);
     if (!_isActive) {
       return;
     }
+    _cadenceStatus = "Complete!";
+    _cadenceValue = cadence.toString();
+    notifyListeners();
 
     // Use calculated cadence to find songs.
     List<TempoSong> songs = await GetSongBPMModel.getSongs(cadence);
@@ -203,6 +207,8 @@ class SpotifyControllerModel with ChangeNotifier {
     _hasStartedFind = false;
   }
 
+  // _getTrackSpotifyURI : Gets the Spotify URI of a particular track by
+  // searching for the track on the Spotify API.
   Future<String> _getTrackSpotifyURI(TempoSong song) async {
     final searchString = "${song.songTitle} ${song.artist.name}";
     var search = await _spotify.search
@@ -230,6 +236,9 @@ class SpotifyControllerModel with ChangeNotifier {
     _playerStateUpdater?.cancel();
     // Reset last PlayerState
     _lastState = null;
+    // Reset cadence values
+    _cadenceStatus = "Inactive";
+    _cadenceValue = "-";
     // Also stop playing any song that is being played.
     SpotifySdk.pause();
   }
@@ -241,6 +250,16 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // playerState : Gets the latest player state returned from the Spotify app.
   PlayerState? get playerState {
-    return _isActive ? this._lastState : null;
+    return this._lastState;
+  }
+
+  // cadenceValue : Gets the latest cadence value calculated.
+  String get cadenceValue {
+    return this._cadenceValue;
+  }
+
+  // cadenceStatus : Gets the latest cadence status.
+  String get cadenceStatus {
+    return this._cadenceStatus;
   }
 }

@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
+import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spotify_sdk/models/player_state.dart';
+import 'package:tuple/tuple.dart';
 
 // MainScreen is the screen that the user will see after confirming connection
 // with Spotify.
@@ -61,8 +63,28 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
       value: _spotifyModel,
       builder: (context, child) {
         return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            // MediaPlayerWidget.
+            Selector<SpotifyControllerModel, PlayerState?>(
+                selector: (_, spotifyModel) => spotifyModel.playerState,
+                builder: (context, state, child) {
+                  log("Building media widget...");
+                  return Align(
+                    alignment: Alignment.topCenter,
+                    child: MediaPlayerWidget(state),
+                  );
+                }),
+            Spacer(),
+            // Cadence Information.
+            Selector<SpotifyControllerModel, Tuple2<String, String>>(
+                selector: (_, spotifyModel) => Tuple2(
+                    spotifyModel.cadenceStatus, spotifyModel.cadenceValue),
+                builder: (context, data, child) {
+                  log("Building Cadence widget...");
+                  return CadencePedometerWidget(data.item1, data.item2);
+                }),
+            Divider(height: 150),
             // Toggle button.
             Selector<SpotifyControllerModel, bool>(
               selector: (_, spotifyModel) => spotifyModel.isActive,
@@ -74,19 +96,6 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
                 );
               },
             ),
-            // TODO : Add more widgets here.
-            // Spacer so the MediaPlayerWidget will be at the bottom.
-            Spacer(),
-            // MediaPlayerWidget.
-            Selector<SpotifyControllerModel, PlayerState?>(
-                selector: (_, spotifyModel) => spotifyModel.playerState,
-                builder: (context, state, child) {
-                  log("Building media widget...");
-                  return Align(
-                    alignment: Alignment.bottomCenter,
-                    child: MediaPlayerWidget(state),
-                  );
-                }),
           ],
         );
       },
