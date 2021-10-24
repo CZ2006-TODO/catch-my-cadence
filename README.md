@@ -16,7 +16,6 @@ $ flutter upgrade          `Optional: To make sure your Flutter runtime is up to
 $ flutter clean            `Optional: Cleans the flutter app directory`
 $ flutter pub get          `Gets dependencies`
 $ flutter pub upgrade      `Upgrades dependencies`
-
 ```
 3. Set up your `/assets/secrets.env` file. You may look at `secrets.env.example` file provided for more
 information.
