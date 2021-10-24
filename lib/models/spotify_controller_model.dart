@@ -37,8 +37,8 @@ class SpotifyControllerModel with ChangeNotifier {
   PlayerState? _lastState;
 
   // Keeps track if the user wants songs to play songs.
-  late bool _isActive;
-  late bool _hasStartedFind; // Flag to check if app already finding new song
+  bool _isActive = false;
+  bool _hasStartedFind = false; // Flag to check if app already finding new song
 
   // Used by the SpotifyControllerModel to search for songs.
   late CadencePedometerModel _cadenceModel;
@@ -49,8 +49,6 @@ class SpotifyControllerModel with ChangeNotifier {
 
     // Initialise required connections to Spotify app.
     _setUpSpotifyConnection();
-    // Model starts off in inactive state.
-    _setInactiveState();
 
     // Initialise the CadencePedometerModel.
     _cadenceModel = CadencePedometerModel();
@@ -61,6 +59,9 @@ class SpotifyControllerModel with ChangeNotifier {
   void _setUpSpotifyConnection() async {
     await _ensureSpotifyConnection();
     _setUpConnectionStream();
+
+    // Set inactive state once all initialisation finished.
+    _setInactiveState();
   }
 
   // _ensureSpotifyConnection : Connects to the Spotify app once.
@@ -89,6 +90,9 @@ class SpotifyControllerModel with ChangeNotifier {
         log(res
             ? "Connection established!"
             : "Unable to connect to Spotify App.");
+        // Since it was initially disconnected, we should reset to inactive state.
+        this._setInactiveState();
+        notifyListeners();
       }
       log("Poll complete!");
     }).onError((e) {
@@ -133,6 +137,13 @@ class SpotifyControllerModel with ChangeNotifier {
     // Cancel the previous timer.
     _playerStateUpdater?.cancel();
     _playerStateUpdater = Timer.periodic(Duration(seconds: 1), (timer) async {
+      // Catch instances where active state has been set to false
+      // while the periodic updater is still active.
+      if (!_isActive) {
+        timer.cancel();
+        return;
+      }
+
       // Update PlayerState.
       _lastState = await SpotifySdk.getPlayerState();
       notifyListeners();
@@ -205,7 +216,7 @@ class SpotifyControllerModel with ChangeNotifier {
     var firstTrack = firstPage.items?.first;
 
     if (firstTrack is Track && firstTrack.uri != null) {
-      log('Track URI: ${firstTrack.uri}\n');
+      log('Track URI: ${firstTrack.uri}');
       return firstTrack.uri!;
     }
     return "";
@@ -217,6 +228,8 @@ class SpotifyControllerModel with ChangeNotifier {
     _isActive = _hasStartedFind = false;
     // Stop the player state checker.
     _playerStateUpdater?.cancel();
+    // Reset last PlayerState
+    _lastState = null;
     // Also stop playing any song that is being played.
     SpotifySdk.pause();
   }

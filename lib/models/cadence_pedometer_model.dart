@@ -42,7 +42,7 @@ class CadencePedometerModel {
 
   // start : Start cadence calculation.
   void start() {
-    log("Active state has been set to true, preparing for cadence calculation...");
+    log("Starting cadence calculation...");
     _setActiveState();
   }
 
@@ -83,7 +83,7 @@ class CadencePedometerModel {
 
   // stop : Stop cadence calculation.
   void stop() {
-    log("Active state has been set to false, resetting...");
+    log("Stopping cadence calculation...");
     _setInactiveState();
   }
 
