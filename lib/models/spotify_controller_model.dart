@@ -209,7 +209,7 @@ class SpotifyControllerModel with ChangeNotifier {
     // Play the required song!
     SpotifySdk.play(spotifyUri: uri);
     Fluttertoast.showToast(
-      msg: "Playing '${selectedSong.songTitle}' with BPM ${selectedSong.tempo}",
+      msg: "'${selectedSong.songTitle}': ${selectedSong.tempo}BPM",
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
     );

@@ -14,13 +14,13 @@ class CadencePedometerWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Status
-        Text("Pedometer Status: $_cadenceStatus",
+        Text("Calculation Status: $_cadenceStatus",
             textAlign: TextAlign.center,
-            style: Theme.of(ctx).textTheme.headline5),
+            style: Theme.of(ctx).textTheme.headline6),
         // Cadence
         Text("Cadence: $_cadenceValue",
             textAlign: TextAlign.center,
-            style: Theme.of(ctx).textTheme.headline5),
+            style: Theme.of(ctx).textTheme.headline4),
       ],
     );
   }
