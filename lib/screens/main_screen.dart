@@ -1,7 +1,5 @@
-import 'package:catch_my_cadence/models/cadence_pedometer_model.dart';
-import 'package:catch_my_cadence/models/get_song_bpm_model.dart';
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
-import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
+import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,59 +17,47 @@ class MainScreen extends StatelessWidget {
         title: Text("Main Screen"),
       ),
       drawer: SideMenu(),
-      body: _MainScreenBody(),
+      body: Padding(
+        padding: EdgeInsets.all(10),
+        child: _MainScreenBody(),
+      ),
     );
   }
 }
 
 // _MainScreenBody is the widget that acts as the main body of the main screen.
 // This widget contains all the necessary data models.
-class _MainScreenBody extends StatefulWidget {
-  const _MainScreenBody({Key? key}) : super(key: key);
-
-  @override
-  _MainScreenBodyState createState() => _MainScreenBodyState();
-}
-
-class _MainScreenBodyState extends State<_MainScreenBody> {
-  late CadencePedometerModel _cadenceModel;
-  late GetSongBPMModel _bpmModel;
-  late SpotifyControllerModel _spotifyModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _spotifyModel = SpotifyControllerModel(context);
-    _cadenceModel = CadencePedometerModel();
-    _bpmModel = GetSongBPMModel();
-  }
-
+class _MainScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    // Allows to hold multiple models.
-    return MultiProvider(
-        // TODO : The interaction between models has not been finalised.
-        providers: [
-          ChangeNotifierProvider.value(value: _cadenceModel),
-          Provider.value(value: _bpmModel),
-          Provider.value(value: _spotifyModel),
-        ],
-        child: Center(child: Consumer<CadencePedometerModel>(
-          builder: (context, cpModel, child) {
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  ElevatedButton(
-                    child: Text(cpModel.isActive ? "Stop" : "Start"),
-                    onPressed: () => cpModel.toggleStatus(),
-                  ),
-                  CadencePedometerWidget(
-                    cadenceActive: cpModel.isActive,
-                    steps: cpModel.steps,
-                    cadence: cpModel.cadence,
-                  )
-                ]);
-          },
-        )));
+    return ChangeNotifierProvider(
+      create: (ctx) => SpotifyControllerModel(ctx),
+      lazy: false,
+      builder: (context, child) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Toggle button.
+            Consumer<SpotifyControllerModel>(
+                builder: (context, spotifyModel, child) {
+              return ElevatedButton(
+                child: Text(spotifyModel.isActive ? "Stop" : "Start"),
+                onPressed: () => spotifyModel.toggleStatus(),
+              );
+            }),
+            // TODO : Add more widgets here.
+            // Spacer so the MediaPlayerWidget will be at the bottom.
+            Spacer(),
+            // MediaPlayerWidget.
+            Consumer<SpotifyControllerModel>(
+                builder: (context, spotifyModel, child) {
+              return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: MediaPlayerWidget(spotifyModel.playerState));
+            }),
+          ],
+        );
+      },
+    );
   }
 }

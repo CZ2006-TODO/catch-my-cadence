@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
+import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:pedometer/pedometer.dart';
 
 // CadencePedometerModel is in charge of handling the pedometer data, as well
 // as calculating the cadence when necessary.
-class CadencePedometerModel with ChangeNotifier {
+class CadencePedometerModel {
   static const _queueSize = 5;
 
   // Data streams
@@ -23,8 +22,7 @@ class CadencePedometerModel with ChangeNotifier {
   CadencePedometerModel() {
     // Initialise the starting state for the model.
     _setInactiveState();
-
-    // _timer not set up as initially, cadence is not calculated.
+    // Initialise the StepCount stream (only happens once).
     _setUpCountStream();
   }
 
@@ -36,26 +34,22 @@ class CadencePedometerModel with ChangeNotifier {
     _stepCountStream.listen((StepCount event) {
       if (_isActive) {
         _numSteps += 1;
-        notifyListeners();
       }
     }).onError((e) {
       log("Pedometer Error: ${e.toString()}");
     });
   }
 
-  // _setInactiveState : Put model into inactive state.
-  // This resets calculation variables to 0, stops the periodic timer,
-  // and empties the cadence queue.
-  void _setInactiveState() {
-    _numSteps = _startTime = 0;
-    _isActive = false;
-    _timer?.cancel();
-    _cadences.clear();
+  // start : Start cadence calculation.
+  void start() {
+    log("Active state has been set to true, preparing for cadence calculation...");
+    _setActiveState();
   }
 
   // _setActiveState : Put model into active state.
   // This sets the start time and also the timer for periodic calculation.
   void _setActiveState() {
+    _isActive = true;
     // Error correction with pedometer delay.
     _startTime = DateTime.now().millisecondsSinceEpoch +
         Duration(milliseconds: 500).inMilliseconds;
@@ -70,8 +64,7 @@ class CadencePedometerModel with ChangeNotifier {
   void _setUpTimer() {
     // This periodic timer updates the current cadence when calculation is active.
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      int timeDifference = DateTime.now().millisecondsSinceEpoch - _startTime;
-      // Needed due to start time error correction.
+      int timeDifference = this._timeElapsed;
       if (timeDifference <= 0) {
         return;
       }
@@ -84,37 +77,59 @@ class CadencePedometerModel with ChangeNotifier {
       if (_cadences.length > _queueSize) {
         _cadences.removeFirst();
       }
-      log("$_cadences -> ${this.cadence}");
-      notifyListeners();
+      log("$_cadences <-: ${this.cadence}");
     });
   }
 
-  // toggleStatus : Toggles active state.
-  // The model will re-configure itself based on the new state.
-  void toggleStatus() {
-    _isActive = !_isActive;
-    log("Setting active state to $_isActive");
-    if (!_isActive) {
-      log("Active state has been set to false, resetting...");
-      _setInactiveState();
-    } else {
-      log("Active state has been set to true, preparing for cadence calculation...");
-      _setActiveState();
-    }
-    notifyListeners();
+  // stop : Stop cadence calculation.
+  void stop() {
+    log("Active state has been set to false, resetting...");
+    _setInactiveState();
   }
 
-  // Getters
-  int get steps {
-    return _numSteps;
+  // _setInactiveState : Put model into inactive state.
+  // This resets calculation variables to 0, stops the periodic timer,
+  // and empties the cadence queue.
+  void _setInactiveState() {
+    _numSteps = _startTime = 0;
+    _isActive = false;
+    _timer?.cancel();
+    _cadences.clear();
   }
 
+  // calculateCadence : Calculates a cadence from sampling within a specified
+  // time frame (in seconds).
+  Future<int> calculateCadence(int seconds) async {
+    // Start the calculation.
+    this.start();
+    // Wait for the specified number of seconds.
+    await Future.delayed(Duration(seconds: seconds));
+    // Sample the current cadence.
+    int cadence = this.cadence;
+    // Stop the calculation.
+    this.stop();
+    return cadence;
+  }
+
+  // cadence : The current cadence calculated by the model.
   int get cadence {
     int total = _cadences.fold(0, (prev, next) => prev + next);
     return (total == 0) ? 0 : (total / _cadences.length).round();
   }
 
+  // isActive : Whether the model is actively calculating the cadence.
   bool get isActive {
     return _isActive;
+  }
+
+  // _timeElapsed : Calculates the time since start of cadence calculation.
+  int get _timeElapsed {
+    if (!_isActive) {
+      return 0;
+    }
+    var now = DateTime.now().millisecondsSinceEpoch;
+    var diff = now - _startTime;
+    // Needed due to start time error correction. See _setActiveState.
+    return math.max(diff, 0); // Returns elapsed milliseconds.
   }
 }
