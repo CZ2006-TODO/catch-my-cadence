@@ -68,44 +68,61 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Album Art.
-            Selector<SpotifyControllerModel, ImageUri?>(
-                selector: (_, spotifyModel) => spotifyModel.imageUri,
-                builder: (context, data, child) {
-                  log("Building new image");
-                  return AlbumArtWidget(data);
-                }),
+            _albumArtWidget(),
+            SizedBox(height: 10),
             // MediaPlayerWidget.
-            Selector<SpotifyControllerModel, PlayerState?>(
-                selector: (_, spotifyModel) => spotifyModel.playerState,
-                builder: (context, state, child) {
-                  log("Building media widget...");
-                  return MediaPlayerWidget(state);
-                }),
+            _mediaPlayerWidget(),
             Spacer(),
             // Cadence Information.
-            Selector<SpotifyControllerModel, Tuple2<String, String>>(
-                selector: (_, spotifyModel) => Tuple2(
-                    spotifyModel.cadenceStatus, spotifyModel.cadenceValue),
-                builder: (context, data, child) {
-                  log("Building Cadence widget...");
-                  return CadencePedometerWidget(data.item1, data.item2);
-                }),
-            Divider(height: 150),
+            _cadenceWidget(),
+            SizedBox(height: MediaQuery.of(context).size.height / 10),
             // Toggle button.
-            Selector<SpotifyControllerModel, bool>(
-              selector: (_, spotifyModel) => spotifyModel.isActive,
-              builder: (context, active, child) {
-                log("Building button...");
-                return Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    child: Text(active ? "Stop" : "Start"),
-                    onPressed: () => _spotifyModel.toggleStatus(),
-                  ),
-                );
-              },
-            ),
+            _toggleButtonWidget(),
           ],
+        );
+      },
+    );
+  }
+
+  Widget _albumArtWidget() {
+    return Selector<SpotifyControllerModel, ImageUri?>(
+        selector: (_, spotifyModel) => spotifyModel.imageUri,
+        builder: (context, data, child) {
+          log("Building new image");
+          return AlbumArtWidget(data);
+        });
+  }
+
+  Widget _mediaPlayerWidget() {
+    return Selector<SpotifyControllerModel, PlayerState?>(
+        selector: (_, spotifyModel) => spotifyModel.playerState,
+        builder: (context, state, child) {
+          log("Building media widget...");
+          return MediaPlayerWidget(state);
+        });
+  }
+
+  Widget _cadenceWidget() {
+    return Selector<SpotifyControllerModel, Tuple2<String, String>>(
+        selector: (_, spotifyModel) =>
+            Tuple2(spotifyModel.cadenceStatus, spotifyModel.cadenceValue),
+        builder: (context, data, child) {
+          log("Building Cadence widget...");
+          return CadencePedometerWidget(data.item1, data.item2);
+        });
+  }
+
+  Widget _toggleButtonWidget() {
+    return Selector<SpotifyControllerModel, bool>(
+      selector: (_, spotifyModel) => spotifyModel.isActive,
+      builder: (context, active, child) {
+        log("Building button...");
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: ElevatedButton(
+            child: Text(active ? "Stop" : "Start"),
+            onPressed: () => _spotifyModel.toggleStatus(),
+          ),
         );
       },
     );
