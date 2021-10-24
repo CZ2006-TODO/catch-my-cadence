@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:catch_my_cadence/models/spotify_controller_model.dart';
+import 'package:catch_my_cadence/screens/widgets/album_art_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:tuple/tuple.dart';
 
@@ -63,17 +65,21 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
       value: _spotifyModel,
       builder: (context, child) {
         return Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            // Album Art.
+            Selector<SpotifyControllerModel, ImageUri?>(
+                selector: (_, spotifyModel) => spotifyModel.imageUri,
+                builder: (context, data, child) {
+                  log("Building new image");
+                  return AlbumArtWidget(data);
+                }),
             // MediaPlayerWidget.
             Selector<SpotifyControllerModel, PlayerState?>(
                 selector: (_, spotifyModel) => spotifyModel.playerState,
                 builder: (context, state, child) {
                   log("Building media widget...");
-                  return Align(
-                    alignment: Alignment.topCenter,
-                    child: MediaPlayerWidget(state),
-                  );
+                  return MediaPlayerWidget(state);
                 }),
             Spacer(),
             // Cadence Information.
@@ -90,9 +96,12 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
               selector: (_, spotifyModel) => spotifyModel.isActive,
               builder: (context, active, child) {
                 log("Building button...");
-                return ElevatedButton(
-                  child: Text(active ? "Stop" : "Start"),
-                  onPressed: () => _spotifyModel.toggleStatus(),
+                return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                    child: Text(active ? "Stop" : "Start"),
+                    onPressed: () => _spotifyModel.toggleStatus(),
+                  ),
                 );
               },
             ),
