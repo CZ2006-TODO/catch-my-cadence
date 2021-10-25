@@ -48,6 +48,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
+  mockito: ^5.0.16
+  build_runner: ^2.1.4
+  
+  fake_async: ^1.2.0
+  clock: ^1.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
