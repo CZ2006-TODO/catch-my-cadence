@@ -26,6 +26,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // Looping
   static final _loopThreshold = 15;
+  static final _cadencePollPeriod = 10;
 
   // Miscellaneous requirements.
   final BuildContext _ctx;
@@ -183,16 +184,14 @@ class SpotifyControllerModel with ChangeNotifier {
     _cadenceStatus = "Calculating...";
     _cadenceValue = "Polling...";
     notifyListeners();
+
     // Calculate cadence with sample time of 10 seconds.
-    _cadenceModel.start();
-    // Keep track of start time.
-    int startTime = _cadenceModel.startTime;
-    await Future.delayed(Duration(seconds: 10));
-    int cadence = _cadenceModel.cadence;
-    if (!_isActive || _cadenceModel.startTime != startTime) {
+    int cadence = await _cadenceModel.calculateCadence(_cadencePollPeriod);
+    // If the returned cadence is -1 (to indicate failure), we just return.
+    if (!_isActive || cadence == -1) {
       return;
     }
-    _cadenceModel.stop();
+
     _cadenceStatus = "Complete!";
     _cadenceValue = cadence.toString();
     notifyListeners();
