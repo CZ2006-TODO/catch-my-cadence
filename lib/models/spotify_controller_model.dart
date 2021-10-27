@@ -24,11 +24,12 @@ class SpotifyControllerModel with ChangeNotifier {
   static final _spotify =
       SpotifyApi(SpotifyApiCredentials(Config.clientId, Config.clientSecret));
 
-  // Constant variables for refined logic.
   // How many seconds before we start finding a new song.
   static final _loopThreshold = 15;
+
   // How many seconds to allow for calculation of the cadence.
   static final _cadencePollPeriod = 10;
+
   // How many milliseconds to wait for Spotify app to play the song before
   // pausing it.
   static final _pauseDelayMilliseconds = 500;
@@ -48,7 +49,7 @@ class SpotifyControllerModel with ChangeNotifier {
   // Keeps track if the user wants songs to play songs.
   bool _isActive = false;
   bool _hasStartedFind = false; // Flag to check if app already finding new song
-  bool _isPaused = false;  // Flag to check if player paused song while finding.
+  bool _isPaused = false; // Flag to check if player paused song while finding.
 
   // Used by the SpotifyControllerModel to search for songs.
   final CadencePedometerModel _cadenceModel = CadencePedometerModel();
@@ -207,23 +208,26 @@ class SpotifyControllerModel with ChangeNotifier {
 
     // Use calculated cadence to find songs.
     List<TempoSong> songs;
+    TempoSong selectedSong;
+    final String uri;
     try {
       songs = await GetSongBPMModel.getSongs(cadence);
       if (!_isActive) {
         return;
       }
-    } on HttpException catch (_) {
+      // Select a random song from the list.
+      selectedSong = songs[_random.nextInt(songs.length)];
+      // Once we select this song, then we find the Spotify URI for this song.
+      uri = await _getTrackSpotifyURI(selectedSong);
+      if (!_isActive) {
+        return;
+      }
+    } on HttpException catch (e) {
       // Error getting a song, so stop everything.
+      log("Error getting a new song to play: ${e.message}\n"
+          "Setting to inactive state...");
       this._setInactiveState();
       notifyListeners();
-      return;
-    }
-
-    // Select a random song from the list.
-    TempoSong selectedSong = songs[_random.nextInt(songs.length)];
-    // Once we select this song, then we find the Spotify URI for this song.
-    final uri = await _getTrackSpotifyURI(selectedSong);
-    if (!_isActive) {
       return;
     }
 
@@ -252,8 +256,9 @@ class SpotifyControllerModel with ChangeNotifier {
     var search = await _spotify.search
         .get(searchString, types: [SearchType.track]) // Do the search
         .first(1) // Get the first 1 page(s) of results.
-        .catchError((err) {
-          print((err as SpotifyException).message);
+        .onError((err, _) {
+          throw HttpException(
+              "Error getting search results: ${(err as SpotifyException).message}");
         });
 
     var firstPage = search.first;
@@ -263,7 +268,7 @@ class SpotifyControllerModel with ChangeNotifier {
       log('Track URI: ${firstTrack.uri}');
       return firstTrack.uri!;
     }
-    return "";
+    throw HttpException("No song found!");
   }
 
   // _setInactiveState : Sets the model to inactive state.
