@@ -28,7 +28,7 @@ class SpotifyControllerModel with ChangeNotifier {
   static final _loopThreshold = 15;
 
   // Miscellaneous requirements.
-  BuildContext _ctx;
+  final BuildContext _ctx;
   final math.Random _random = math.Random();
 
   // For ensuring connection to Spotify app.
@@ -184,10 +184,15 @@ class SpotifyControllerModel with ChangeNotifier {
     _cadenceValue = "Polling...";
     notifyListeners();
     // Calculate cadence with sample time of 10 seconds.
-    int cadence = await _cadenceModel.calculateCadence(10);
-    if (!_isActive) {
+    _cadenceModel.start();
+    // Keep track of start time.
+    int startTime = _cadenceModel.startTime;
+    await Future.delayed(Duration(seconds: 10));
+    int cadence = _cadenceModel.cadence;
+    if (!_isActive || _cadenceModel.startTime != startTime) {
       return;
     }
+    _cadenceModel.stop();
     _cadenceStatus = "Complete!";
     _cadenceValue = cadence.toString();
     notifyListeners();
