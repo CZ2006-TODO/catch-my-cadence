@@ -24,9 +24,14 @@ class SpotifyControllerModel with ChangeNotifier {
   static final _spotify =
       SpotifyApi(SpotifyApiCredentials(Config.clientId, Config.clientSecret));
 
-  // Looping
+  // Constant variables for refined logic.
+  // How many seconds before we start finding a new song.
   static final _loopThreshold = 15;
+  // How many seconds to allow for calculation of the cadence.
   static final _cadencePollPeriod = 10;
+  // How many milliseconds to wait for Spotify app to play the song before
+  // pausing it.
+  static final _pauseDelayMilliseconds = 500;
 
   // Miscellaneous requirements.
   final BuildContext _ctx;
@@ -43,6 +48,7 @@ class SpotifyControllerModel with ChangeNotifier {
   // Keeps track if the user wants songs to play songs.
   bool _isActive = false;
   bool _hasStartedFind = false; // Flag to check if app already finding new song
+  bool _isPaused = false;  // Flag to check if player paused song while finding.
 
   // Used by the SpotifyControllerModel to search for songs.
   final CadencePedometerModel _cadenceModel = CadencePedometerModel();
@@ -164,6 +170,9 @@ class SpotifyControllerModel with ChangeNotifier {
         notifyListeners();
       }
 
+      // Check for paused status.
+      _isPaused = state.isPaused;
+
       // Get time to end of song.
       int timeLeft = track.duration - state.playbackPosition;
       if (Duration(milliseconds: timeLeft).inSeconds < _loopThreshold &&
@@ -219,12 +228,20 @@ class SpotifyControllerModel with ChangeNotifier {
     }
 
     // Play the required song!
-    SpotifySdk.play(spotifyUri: uri);
+    bool paused = _isPaused;
     Fluttertoast.showToast(
       msg: "'${selectedSong.songTitle}': ${selectedSong.tempo}BPM",
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
     );
+    await SpotifySdk.play(spotifyUri: uri);
+    if (paused) {
+      log("Player was paused while finding song, so pausing...");
+      // We need to delay to allow the Spotify app to receive the play command,
+      // so we can actually pause the next song that is playing.
+      await Future.delayed(Duration(milliseconds: _pauseDelayMilliseconds));
+      SpotifySdk.pause();
+    }
     _hasStartedFind = false;
   }
 
