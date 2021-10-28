@@ -41,6 +41,9 @@ class SpotifyControllerModel with ChangeNotifier {
   // For ensuring connection to Spotify app.
   late Stream<ConnectionStatus> _connectionStream;
 
+  // Used by the SpotifyControllerModel to search for songs.
+  final CadencePedometerModel _cadenceModel = CadencePedometerModel();
+
   // Player status.
   Timer? _playerStateUpdater;
   PlayerState? _lastState;
@@ -50,9 +53,6 @@ class SpotifyControllerModel with ChangeNotifier {
   bool _isActive = false;
   bool _hasStartedFind = false; // Flag to check if app already finding new song
   bool _isPaused = false; // Flag to check if player paused song while finding.
-
-  // Used by the SpotifyControllerModel to search for songs.
-  final CadencePedometerModel _cadenceModel = CadencePedometerModel();
 
   // Cadence data
   String _cadenceValue = "-";
@@ -216,7 +216,7 @@ class SpotifyControllerModel with ChangeNotifier {
         return;
       }
       // Select a random song from the list.
-      selectedSong = songs[_random.nextInt(songs.length)];
+      selectedSong = songs[_random.nextInt((songs.length / 4).ceil())];
       // Once we select this song, then we find the Spotify URI for this song.
       uri = await _getTrackSpotifyURI(selectedSong);
       if (!_isActive) {
@@ -274,7 +274,7 @@ class SpotifyControllerModel with ChangeNotifier {
   // _setInactiveState : Sets the model to inactive state.
   // This will also stop the playerStateUpdater and cancels any upcoming searches.
   void _setInactiveState() {
-    _isActive = _hasStartedFind = false;
+    _isActive = _hasStartedFind = _isPaused = false;
     // Stop the player state checker.
     _playerStateUpdater?.cancel();
     // Reset last PlayerState
