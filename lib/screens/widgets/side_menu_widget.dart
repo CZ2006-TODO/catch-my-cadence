@@ -24,7 +24,7 @@ class SideMenu extends StatelessWidget {
         _homeOption(context),
         _aboutOption(context),
         _settingsOption(context),
-        _logoutOption(context)
+        _disconnectOption(context)
       ]),
     );
   }
@@ -42,8 +42,7 @@ class SideMenu extends StatelessWidget {
           color: Colors.blue,
           image: DecorationImage(
               image:
-                  AssetImage("assets/images/splash_screen_without_words.png"),
-              fit: BoxFit.scaleDown)),
+                  AssetImage("assets/images/splash_screen_without_words.png"))),
     );
   }
 
@@ -95,57 +94,61 @@ class SideMenu extends StatelessWidget {
         });
   }
 
-  // _LogoutOption : Routes the user to LoggedOutScreen.
-  ListTile _logoutOption(BuildContext context) {
+  // _disconnectOption : Disconnects current Spotify user session.
+  ListTile _disconnectOption(BuildContext context) {
     return ListTile(
         title: Text(
-          'Log Out',
+          'Disconnect',
         ),
         leading: Icon(
           Icons.logout,
         ),
         onTap: () {
-          showLogoutDialog(context);
+          _showDisconnectDialog(context);
         });
   }
-}
 
-showLogoutDialog(BuildContext context) {
-  // set up the button
-  Widget cancelButton = TextButton(
-    child: Text("CANCEL"),
-    onPressed: () {
-      Navigator.of(context).pop();
-    },
-  );
-  Widget okButton = TextButton(
-    child: Text("OK"),
-    onPressed: () {
-      // Sets firstRunFlag to true.
-      Config.firstRunFlag = true;
-      log("Logging Out");
-      // "Restart" app by removing all screens from the stack
-      // and loading the LoadingScreen again.
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          RouteDelegator.LOADING_SCREEN_ROUTE, (Route<dynamic> route) => false);
-    },
-  );
+  // _showDisconnectDialog : A dialog to confirm with the user whether to logout
+  // or not. Used by the disconnectOption.
+  void _showDisconnectDialog(BuildContext context) {
+    // Button to cancel logout to cancel disconnect.
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
 
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: Text("Catch My Cadence"),
-    content: Text("Are you sure you want to logout?"),
-    actions: [
-      cancelButton,
-      okButton,
-    ],
-  );
+    // Button to confirm disconnect.
+    Widget okButton = TextButton(
+      child: Text("Yup!"),
+      onPressed: () {
+        // Sets firstRunFlag to true.
+        Config.firstRunFlag = true;
+        log("Disconnecting...");
+        // "Restart" app by removing all screens from the stack
+        // and loading the LoadingScreen again.
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            RouteDelegator.LOADING_SCREEN_ROUTE,
+            (Route<dynamic> route) => false);
+      },
+    );
 
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
+    // Set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Disconnect"),
+      content: Text("Are you sure you want to disconnect?"),
+      actions: [
+        cancelButton,
+        okButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return alert;
+      },
+    );
+  }
 }
