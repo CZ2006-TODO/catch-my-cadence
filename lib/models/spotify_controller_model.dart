@@ -59,6 +59,8 @@ class SpotifyControllerModel with ChangeNotifier {
   String _cadenceStatus = "Inactive";
 
   SpotifyControllerModel(this._ctx) {
+    // Set inactive state.
+    _setInactiveState();
     // Initialise required connections to Spotify app.
     _setUpSpotifyConnection();
   }
@@ -68,9 +70,6 @@ class SpotifyControllerModel with ChangeNotifier {
   void _setUpSpotifyConnection() async {
     await _ensureSpotifyConnection();
     _setUpConnectionStream();
-
-    // Set inactive state once all initialisation finished.
-    _setInactiveState();
   }
 
   // _ensureSpotifyConnection : Connects to the Spotify app once.
