@@ -38,3 +38,4 @@ output.
     - Follow the instructions [here](https://developer.spotify.com/documentation/android/quick-start/index%20copy/) 
     in the `Register App Fingerprints` section.
     - Contact <b>@darylhjd</b> to whitelist your SHA1 key.
+- If you are not a collaborator, you may create your own app in Spotify Dashboard and supply your own client secrets to run the app.
