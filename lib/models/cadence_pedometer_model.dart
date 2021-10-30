@@ -97,16 +97,21 @@ class CadencePedometerModel {
     _cadences.clear();
   }
 
-  // calculateCadence : Calculates a cadence from sampling within a specified
-  // time frame (in seconds).
+  // calculateCadence ： Calculates cadence within a given sampling time period.
+  // Note that this function uses a return value of -1 to indicate that the
+  // result of the sampling is invalid.
+  // This is indicated by a different startTime by the end of the calculation.
   Future<int> calculateCadence(int seconds) async {
-    // Start the calculation.
+    // Calculate cadence with sample time of 10 seconds.
     this.start();
-    // Wait for the specified number of seconds.
+    // Keep track of start time, so we can check if the button was pressed
+    // again while we were polling.
+    int startTime = _startTime;
     await Future.delayed(Duration(seconds: seconds));
-    // Sample the current cadence.
     int cadence = this.cadence;
-    // Stop the calculation.
+    if (startTime != _startTime) {
+      return -1;
+    }
     this.stop();
     return cadence;
   }
