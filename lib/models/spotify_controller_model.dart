@@ -224,7 +224,7 @@ class SpotifyControllerModel with ChangeNotifier {
     } on HttpException catch (e) {
       // Error getting a song, so stop everything.
       Fluttertoast.showToast(
-        msg: "No songs with BPM matching cadence \n Stopping...",
+        msg: "No songs with BPM matching cadence. Stopping...",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
       );
