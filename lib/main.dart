@@ -9,6 +9,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Config.prefs = await SharedPreferences.getInstance();
 
+  // Load environment secrets.
+  await Config.loadSecrets();
   runApp(MaterialApp(
     theme: Config.getTheme(),
     title: "Catch My Cadence",
