@@ -22,30 +22,27 @@ class SideMenu extends StatelessWidget {
         // The menu follows this order.
         _drawerHeader(),
         _homeOption(context),
-        _activityHistoryOption(context),
         _aboutOption(context),
-        _helpOption(context),
         _settingsOption(context),
-        _logoutOption(context)
+        _disconnectOption(context)
       ]),
     );
   }
 
   // _drawerHeader : Contains the user's name, email, and avatar
-  // TODO: Might not be possible to get such info using the provided SDK,
-  // so might need to change to show other information.
   UserAccountsDrawerHeader _drawerHeader() {
     return UserAccountsDrawerHeader(
       accountName: Text(
-        'Tan Ah Kow',
+        'Catch My Cadence',
       ),
       accountEmail: Text(
-        'tanahkow@gmail.com',
+        'Run to the Beat',
       ),
-      currentAccountPicture: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        child: Image.asset("assets/images/Spotify_Icon_RGB_Green.png"),
-      ),
+      decoration: BoxDecoration(
+          color: Colors.blue,
+          image: DecorationImage(
+              image:
+                  AssetImage("assets/images/splash_screen_without_words.png"))),
     );
   }
 
@@ -65,21 +62,6 @@ class SideMenu extends StatelessWidget {
         });
   }
 
-  // _activityHistoryOption : Routes the user to ActivityHistoryScreen.
-  ListTile _activityHistoryOption(BuildContext context) {
-    return ListTile(
-      title: Text(
-        'Activity History',
-      ),
-      leading: Icon(
-        Icons.history,
-      ),
-      // onTap:(){
-      // TODO: Link to ActivityHistory screen
-      // }
-    );
-  }
-
   // _aboutOption : Routes the user to AboutScreen to learn more about the app.
   ListTile _aboutOption(BuildContext context) {
     return ListTile(
@@ -94,22 +76,6 @@ class SideMenu extends StatelessWidget {
           Navigator.of(context)
               .popAndPushNamed(RouteDelegator.ABOUT_SCREEN_ROUTE);
         });
-  }
-
-  // _helpOption: Routes the user to HelpScreen where they can access
-  // website(if applicable) or seek assistance.
-  ListTile _helpOption(BuildContext context) {
-    return ListTile(
-      title: Text(
-        'Help',
-      ),
-      leading: Icon(
-        Icons.help,
-      ),
-      // onTap:(){
-      // TODO: Link to Help screen
-      // }
-    );
   }
 
   // _settingsOption : Routes user to SettingsScreen.
@@ -128,24 +94,61 @@ class SideMenu extends StatelessWidget {
         });
   }
 
-  // _LogoutOption : Routes the user to LoggedOutScreen.
-  ListTile _logoutOption(BuildContext context) {
+  // _disconnectOption : Disconnects current Spotify user session.
+  ListTile _disconnectOption(BuildContext context) {
     return ListTile(
         title: Text(
-          'Log Out',
+          'Disconnect',
         ),
         leading: Icon(
           Icons.logout,
         ),
         onTap: () {
-          // Sets firstRunFlag to true.
-          Config.firstRunFlag = true;
-          log("Logging Out");
-          // "Restart" app by removing all screens from the stack
-          // and loading the LoadingScreen again.
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              RouteDelegator.LOADING_SCREEN_ROUTE,
-              (Route<dynamic> route) => false);
+          _showDisconnectDialog(context);
         });
+  }
+
+  // _showDisconnectDialog : A dialog to confirm with the user whether to logout
+  // or not. Used by the disconnectOption.
+  void _showDisconnectDialog(BuildContext context) {
+    // Button to cancel logout to cancel disconnect.
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Button to confirm disconnect.
+    Widget okButton = TextButton(
+      child: Text("Yup!"),
+      onPressed: () {
+        // Sets firstRunFlag to true.
+        Config.firstRunFlag = true;
+        log("Disconnecting...");
+        // "Restart" app by removing all screens from the stack
+        // and loading the LoadingScreen again.
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            RouteDelegator.LOADING_SCREEN_ROUTE,
+            (Route<dynamic> route) => false);
+      },
+    );
+
+    // Set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Disconnect"),
+      content: Text("Are you sure you want to disconnect?"),
+      actions: [
+        cancelButton,
+        okButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return alert;
+      },
+    );
   }
 }
