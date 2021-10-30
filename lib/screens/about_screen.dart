@@ -42,7 +42,8 @@ class _AboutScreenBody extends StatelessWidget {
           "Catch My Cadence tracks your running cadence, "
           "and then finds a song from Spotify that matches your cadence.\n\n"
           "We believe that this will make your runs much more enjoyable! "
-          "Stay safe, and have a good run!",
+          "Stay safe, and have a good run!"
+          "Thanks to GetSongBPM and Spotify!",
           textAlign: TextAlign.center,
           style: Theme.of(ctx).textTheme.headline6,
         ),
