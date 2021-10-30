@@ -223,6 +223,7 @@ class SpotifyControllerModel with ChangeNotifier {
       }
     } on HttpException catch (e) {
       // Error getting a song, so stop everything.
+      Fluttertoast.showToast(msg: "Cadence error");
       log("Error getting a new song to play: ${e.message}\n"
           "Setting to inactive state...");
       this._setInactiveState();
