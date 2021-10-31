@@ -29,7 +29,7 @@ class GetSongBPMModel {
     final response = await http
         .get(uri, headers: _headers)
         .timeout(Duration(seconds: _httpTimeout), onTimeout: () {
-          throw TimeoutException("GetSongBPM timed out!");
+      throw TimeoutException("GetSongBPM timed out!");
     });
 
     var resp = jsonDecode(response.body);

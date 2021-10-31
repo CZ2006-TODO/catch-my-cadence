@@ -222,7 +222,8 @@ class SpotifyControllerModel with ChangeNotifier {
       if (!_isActive) {
         return;
       }
-    } on HttpException catch (e) { // HTTP errors
+    } on HttpException catch (e) {
+      // HTTP errors
       // Error getting a song, so stop everything.
       Fluttertoast.showToast(
         msg: "No songs with BPM matching cadence. Stopping...",
@@ -234,7 +235,8 @@ class SpotifyControllerModel with ChangeNotifier {
       this._setInactiveState();
       notifyListeners();
       return;
-    } on TimeoutException catch (e) { // HTTP request timeout errors
+    } on TimeoutException catch (e) {
+      // HTTP request timeout errors
       Fluttertoast.showToast(
         msg: "${e.message}",
         toastLength: Toast.LENGTH_LONG,
@@ -282,11 +284,12 @@ class SpotifyControllerModel with ChangeNotifier {
         .get(searchString, types: [SearchType.track]) // Do the search
         .first(1) // Get the first 1 page(s) of results.
         .onError((err, _) {
-      throw HttpException(
-          "Error getting search results: ${(err as SpotifyException).message}");
-    }).timeout(Duration(seconds: _httpTimeout), onTimeout: () {
-      throw TimeoutException("Getting Spotify URI timed out!");
-    });
+          throw HttpException(
+              "Error getting search results: ${(err as SpotifyException).message}");
+        })
+        .timeout(Duration(seconds: _httpTimeout), onTimeout: () {
+          throw TimeoutException("Getting Spotify URI timed out!");
+        });
 
     var firstPage = search.first;
     var firstTrack = firstPage.items?.first;
