@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 class GetSongBPMModel {
   static const _baseAPI = "api.getsongbpm.com";
   static const _tempoPath = "/tempo/";
-  static const _httpTimeout = 3; // Leeway for HTTP request.
+  static const _httpTimeout = 10; // Leeway for HTTP request.
 
   static const _headers = {
     'Content-type': 'application/json',

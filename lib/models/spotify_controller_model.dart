@@ -23,7 +23,7 @@ class SpotifyControllerModel with ChangeNotifier {
   // For interfacing with Spotify Web API.
   static final _spotify =
       SpotifyApi(SpotifyApiCredentials(Config.clientId, Config.clientSecret));
-  static const _httpTimeout = 3; // Leeway for HTTP request.
+  static const _httpTimeout = 10; // Leeway for HTTP request.
 
   // How many seconds before we start finding a new song.
   static final _loopThreshold = 15;
