@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -10,6 +11,7 @@ import 'package:http/http.dart' as http;
 class GetSongBPMModel {
   static const _baseAPI = "api.getsongbpm.com";
   static const _tempoPath = "/tempo/";
+  static const _httpTimeout = 3; // Leeway for HTTP request.
 
   static const _headers = {
     'Content-type': 'application/json',
@@ -24,7 +26,11 @@ class GetSongBPMModel {
       "bpm": bpm.toString(),
     };
     final uri = Uri.https(_baseAPI, _tempoPath, queryParams);
-    final response = await http.get(uri, headers: _headers);
+    final response = await http
+        .get(uri, headers: _headers)
+        .timeout(Duration(seconds: _httpTimeout), onTimeout: () {
+          throw TimeoutException("GetSongBPM timed out!");
+    });
 
     var resp = jsonDecode(response.body);
 
