@@ -53,4 +53,23 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(MainScreen), findsOneWidget);
   });
+
+  testWidgets('Loading screen displays dialog if permissions not found',
+      (WidgetTester tester) async {
+    // deny permission
+    const MethodChannel('flutter.baseflow.com/permissions/methods')
+        .setMockMethodCallHandler((MethodCall methodCall) async {
+      return PermissionStatus.denied.index;
+    });
+
+    await tester.pumpWidget(new MaterialApp(
+      title: "Catch My Cadence",
+      initialRoute: RouteDelegator.LOADING_SCREEN_ROUTE,
+      onGenerateRoute: RouteDelegator.delegateRoute,
+    ));
+
+    await tester.pump(Duration(seconds: 2));
+    await tester.pumpAndSettle();
+    expect(find.textContaining("Permissions Required"), findsOneWidget);
+  });
 }
