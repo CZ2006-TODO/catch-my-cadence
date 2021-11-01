@@ -258,7 +258,7 @@ class SpotifyControllerModel with ChangeNotifier {
       log("SocketException!");
       this._setInactiveState();
       notifyListeners();
-      return true;
+      return false;
     }
 
     // Play the required song!
