@@ -18,8 +18,14 @@ class GetSongBPMModel {
     'Accept': 'application/json',
   };
 
+  // dependency injection of http client
+  late http.Client client;
+  GetSongBPMModel(http.Client client) {
+    this.client = client;
+  }
+
   // getSongs : Returns a list of songs with a given BPM.
-  static Future<List<TempoSong>> getSongs(int bpm) async {
+  Future<List<TempoSong>> getSongs(int bpm) async {
     log("Getting songs of BPM $bpm");
     final queryParams = {
       "api_key": Config.getSongBpmApiKey,

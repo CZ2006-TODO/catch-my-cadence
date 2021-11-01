@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:tuple/tuple.dart';
+import 'package:http/http.dart' as http;
 
 // MainScreen is the screen that the user will see after confirming connection
 // with Spotify.
@@ -47,7 +48,7 @@ class _MainScreenBodyState extends State<_MainScreenBody> {
   @override
   void initState() {
     super.initState();
-    _spotifyModel = SpotifyControllerModel(context);
+    _spotifyModel = SpotifyControllerModel(context, http.Client());
   }
 
   @override
