@@ -16,7 +16,8 @@ import 'package:tuple/tuple.dart';
 // with Spotify.
 // This screen also contains many other widgets such as the CadencePedometerWidget.
 class MainScreen extends StatelessWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  final http.Client _client;
+  const MainScreen(this._client, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext ctx) {
@@ -27,7 +28,7 @@ class MainScreen extends StatelessWidget {
       drawer: SideMenu(),
       body: Padding(
         padding: EdgeInsets.all(10),
-        child: _MainScreenBody(),
+        child: _MainScreenBody(_client),
       ),
     );
   }
@@ -36,19 +37,23 @@ class MainScreen extends StatelessWidget {
 // _MainScreenBody is the widget that acts as the main body of the main screen.
 // This widget contains all the necessary data models.
 class _MainScreenBody extends StatefulWidget {
-  _MainScreenBody({Key? key}) : super(key: key);
+  late final http.Client _client;
+  _MainScreenBody(this._client, {Key? key}) : super(key: key);
 
   @override
-  _MainScreenBodyState createState() => _MainScreenBodyState();
+  _MainScreenBodyState createState() => _MainScreenBodyState(this._client);
 }
 
 class _MainScreenBodyState extends State<_MainScreenBody> {
   late final SpotifyControllerModel _spotifyModel;
+  late final http.Client _client;
+
+  _MainScreenBodyState(this._client);
 
   @override
   void initState() {
     super.initState();
-    _spotifyModel = SpotifyControllerModel(context, http.Client());
+    _spotifyModel = SpotifyControllerModel(context, this._client);
   }
 
   @override
