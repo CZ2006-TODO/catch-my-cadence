@@ -229,7 +229,7 @@ class SpotifyControllerModel with ChangeNotifier {
       // HTTP errors
       // Error getting a song, so stop everything.
       Fluttertoast.showToast(
-        msg: "No songs with BPM matching cadence. Stopping...",
+        msg: "Detected slow/fast BPM, so stopping...",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
       );
