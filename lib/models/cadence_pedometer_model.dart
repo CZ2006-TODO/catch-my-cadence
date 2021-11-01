@@ -63,6 +63,8 @@ class CadencePedometerModel {
   // a new timer will be created when it is re-toggled to active state.
   void _setUpTimer() {
     // This periodic timer updates the current cadence when calculation is active.
+    log("Creating timer...");
+    _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       int timeDifference = this._timeElapsed;
       if (timeDifference <= 0) {

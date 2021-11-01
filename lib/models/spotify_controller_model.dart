@@ -136,7 +136,10 @@ class SpotifyControllerModel with ChangeNotifier {
   // model such that it attempts to find a new song everytime the current song
   // is about to end.
   Future<void> _performPlayLoop() async {
-    await _calculateCadenceAndPlaySong();
+    bool success = await _calculateCadenceAndPlaySong();
+    if (!success) {
+      return;
+    }
 
     // Set up a new periodic player state checker.
     // Required since SpotifySdk.subscribePlayerState is not regularly updated.
@@ -190,7 +193,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // _calculateCadenceAndPlaySong : Calculates the current cadence
   // and plays a song matching that cadence.
-  Future<void> _calculateCadenceAndPlaySong() async {
+  Future<bool> _calculateCadenceAndPlaySong() async {
     _cadenceStatus = "Calculating...";
     _cadenceValue = "Polling...";
     notifyListeners();
@@ -199,7 +202,7 @@ class SpotifyControllerModel with ChangeNotifier {
     int cadence = await _cadenceModel.calculateCadence(_cadencePollPeriod);
     // If the returned cadence is -1 (to indicate failure), we just return.
     if (!_isActive || cadence == -1) {
-      return;
+      return false;
     }
 
     _cadenceStatus = "Complete!";
@@ -213,14 +216,14 @@ class SpotifyControllerModel with ChangeNotifier {
     try {
       songs = await GetSongBPMModel.getSongs(cadence);
       if (!_isActive) {
-        return;
+        return false;
       }
       // Select a random song from the list.
       selectedSong = songs[_random.nextInt((songs.length / 4).ceil())];
       // Once we select this song, then we find the Spotify URI for this song.
       uri = await _getTrackSpotifyURI(selectedSong);
       if (!_isActive) {
-        return;
+        return false;
       }
     } on HttpException catch (e) {
       // HTTP errors
@@ -234,7 +237,7 @@ class SpotifyControllerModel with ChangeNotifier {
           "Setting to inactive state...");
       this._setInactiveState();
       notifyListeners();
-      return;
+      return false;
     } on TimeoutException catch (e) {
       // HTTP request timeout errors
       Fluttertoast.showToast(
@@ -245,7 +248,7 @@ class SpotifyControllerModel with ChangeNotifier {
       log("HTTP timeout!");
       this._setInactiveState();
       notifyListeners();
-      return;
+      return false;
     } on SocketException catch (_) {
       Fluttertoast.showToast(
         msg: "Not connected to internet...",
@@ -255,7 +258,7 @@ class SpotifyControllerModel with ChangeNotifier {
       log("SocketException!");
       this._setInactiveState();
       notifyListeners();
-      return;
+      return true;
     }
 
     // Play the required song!
@@ -274,6 +277,7 @@ class SpotifyControllerModel with ChangeNotifier {
       SpotifySdk.pause();
     }
     _hasStartedFind = false;
+    return true;
   }
 
   // _getTrackSpotifyURI : Gets the Spotify URI of a particular track by
