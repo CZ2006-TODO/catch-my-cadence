@@ -45,6 +45,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // Used by the SpotifyControllerModel to search for songs.
   final CadencePedometerModel _cadenceModel = CadencePedometerModel();
+  late GetSongBPMModel _bpmModel;
 
   // Player status.
   Timer? _playerStateUpdater;
@@ -60,9 +61,9 @@ class SpotifyControllerModel with ChangeNotifier {
   String _cadenceValue = "-";
   String _cadenceStatus = "Inactive";
 
-  // http client for fetching (dependency injection)
-  http.Client client;
-  SpotifyControllerModel(this._ctx, this.client) {
+  SpotifyControllerModel(this._ctx, http.Client client) {
+    // Create GetSongBPMModel
+    this._bpmModel = GetSongBPMModel(client);
     // Set inactive state.
     _setInactiveState();
     // Initialise required connections to Spotify app.
@@ -214,7 +215,7 @@ class SpotifyControllerModel with ChangeNotifier {
     TempoSong selectedSong;
     final String uri;
     try {
-      songs = await GetSongBPMModel(this.client).getSongs(cadence);
+      songs = await _bpmModel.getSongs(cadence);
       if (!_isActive) {
         return;
       }
