@@ -23,6 +23,7 @@ class SpotifyControllerModel with ChangeNotifier {
   // For interfacing with Spotify Web API.
   static final _spotify =
       SpotifyApi(SpotifyApiCredentials(Config.clientId, Config.clientSecret));
+  static const _httpTimeout = 10; // Leeway for HTTP request.
 
   // How many seconds before we start finding a new song.
   static final _loopThreshold = 15;
@@ -222,6 +223,7 @@ class SpotifyControllerModel with ChangeNotifier {
         return;
       }
     } on HttpException catch (e) {
+      // HTTP errors
       // Error getting a song, so stop everything.
       Fluttertoast.showToast(
         msg: "No songs with BPM matching cadence. Stopping...",
@@ -230,6 +232,27 @@ class SpotifyControllerModel with ChangeNotifier {
       );
       log("Error getting a new song to play: ${e.message}\n"
           "Setting to inactive state...");
+      this._setInactiveState();
+      notifyListeners();
+      return;
+    } on TimeoutException catch (e) {
+      // HTTP request timeout errors
+      Fluttertoast.showToast(
+        msg: "${e.message}",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+      log("HTTP timeout!");
+      this._setInactiveState();
+      notifyListeners();
+      return;
+    } on SocketException catch (_) {
+      Fluttertoast.showToast(
+        msg: "Not connected to internet...",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+      log("SocketException!");
       this._setInactiveState();
       notifyListeners();
       return;
@@ -263,6 +286,9 @@ class SpotifyControllerModel with ChangeNotifier {
         .onError((err, _) {
           throw HttpException(
               "Error getting search results: ${(err as SpotifyException).message}");
+        })
+        .timeout(Duration(seconds: _httpTimeout), onTimeout: () {
+          throw TimeoutException("Getting Spotify URI timed out!");
         });
 
     var firstPage = search.first;
