@@ -80,9 +80,14 @@ class SpotifyControllerModel with ChangeNotifier {
           clientId: Config.clientId, redirectUrl: Config.redirectUri);
     } on PlatformException catch (e) {
       showDialog(
-          context: this._ctx,
-          builder: (_) =>
-              FatalErrorDialog(title: "Uh oh!", message: e.toString()));
+        context: _ctx,
+        builder: (c) {
+          return WillPopScope(
+              onWillPop: () => Future.value(false),
+              child: FatalErrorDialog(title: "Uh oh!", message: e.toString()));
+        },
+        barrierDismissible: false,
+      );
     }
   }
 
