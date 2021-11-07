@@ -27,10 +27,6 @@ $ flutter run --release     `Runs the app in release mode.`
 NOTE: Running the app in release mode reduces app 'jankiness'. However, there is no logging or debugging
 output.
 
-## To-Do
-- [ ] Testing
-- [ ] Reconcile application and documentation details.
-
 ## FAQ
 ### I get a `UserNotAuthorizedException` when running the app!
 - First check that you have defined all required secrets in your `secrets.env` file.
