@@ -6,6 +6,7 @@ import 'package:catch_my_cadence/screens/widgets/cadence_pedometer_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/media_player_widget.dart';
 import 'package:catch_my_cadence/screens/widgets/side_menu_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/player_state.dart';
@@ -15,7 +16,8 @@ import 'package:tuple/tuple.dart';
 // with Spotify.
 // This screen also contains many other widgets such as the CadencePedometerWidget.
 class MainScreen extends StatelessWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  final http.Client _client;
+  const MainScreen(this._client, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext ctx) {
@@ -26,7 +28,7 @@ class MainScreen extends StatelessWidget {
       drawer: SideMenu(),
       body: Padding(
         padding: EdgeInsets.all(10),
-        child: _MainScreenBody(),
+        child: _MainScreenBody(_client),
       ),
     );
   }
@@ -35,19 +37,23 @@ class MainScreen extends StatelessWidget {
 // _MainScreenBody is the widget that acts as the main body of the main screen.
 // This widget contains all the necessary data models.
 class _MainScreenBody extends StatefulWidget {
-  _MainScreenBody({Key? key}) : super(key: key);
+  late final http.Client _client;
+  _MainScreenBody(this._client, {Key? key}) : super(key: key);
 
   @override
-  _MainScreenBodyState createState() => _MainScreenBodyState();
+  _MainScreenBodyState createState() => _MainScreenBodyState(this._client);
 }
 
 class _MainScreenBodyState extends State<_MainScreenBody> {
   late final SpotifyControllerModel _spotifyModel;
+  late final http.Client _client;
+
+  _MainScreenBodyState(this._client);
 
   @override
   void initState() {
     super.initState();
-    _spotifyModel = SpotifyControllerModel(context);
+    _spotifyModel = SpotifyControllerModel(context, this._client);
   }
 
   @override

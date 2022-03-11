@@ -24,9 +24,6 @@ class _LoadingScreenState extends State<LoadingScreen>
     // Artificially slow down the loading for user experience.
     await Future.delayed(Duration(seconds: 1));
 
-    // Load environment secrets.
-    await Config.loadSecrets();
-
     // Check permission
     _checkActivityRecognitionPermissionAndProceed();
   }

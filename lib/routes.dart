@@ -6,6 +6,7 @@ import 'package:catch_my_cadence/screens/loading_screen.dart';
 import 'package:catch_my_cadence/screens/main_screen.dart';
 import 'package:catch_my_cadence/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 // RouteDelegator helps to navigate the different screens of the app.
 class RouteDelegator {
@@ -26,7 +27,7 @@ class RouteDelegator {
         log("Pushing MainScreen...");
         return MaterialPageRoute(
             settings: RouteSettings(name: MAIN_SCREEN_ROUTE),
-            builder: (ctx) => MainScreen());
+            builder: (ctx) => MainScreen(http.Client()));
       case CONFIRM_CONNECTION_SCREEN_ROUTE: // Confirm connection screen
         log("Pushing ConfirmConnectionScreen...");
         return MaterialPageRoute(

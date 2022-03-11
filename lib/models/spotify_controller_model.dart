@@ -15,6 +15,7 @@ import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
+import 'package:http/http.dart' as http;
 
 // SpotifyControllerModel is in charge of maintaining connection between
 // the app and the Spotify app, as well as for managing the player.
@@ -44,6 +45,7 @@ class SpotifyControllerModel with ChangeNotifier {
 
   // Used by the SpotifyControllerModel to search for songs.
   final CadencePedometerModel _cadenceModel = CadencePedometerModel();
+  late GetSongBPMModel _bpmModel;
 
   // Player status.
   Timer? _playerStateUpdater;
@@ -59,7 +61,9 @@ class SpotifyControllerModel with ChangeNotifier {
   String _cadenceValue = "-";
   String _cadenceStatus = "Inactive";
 
-  SpotifyControllerModel(this._ctx) {
+  SpotifyControllerModel(this._ctx, http.Client client) {
+    // Create GetSongBPMModel
+    this._bpmModel = GetSongBPMModel(client);
     // Set inactive state.
     _setInactiveState();
     // Initialise required connections to Spotify app.
@@ -219,7 +223,7 @@ class SpotifyControllerModel with ChangeNotifier {
     TempoSong selectedSong;
     final String uri;
     try {
-      songs = await GetSongBPMModel.getSongs(cadence);
+      songs = await _bpmModel.getSongs(cadence);
       if (!_isActive) {
         return false;
       }

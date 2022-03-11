@@ -18,15 +18,20 @@ class GetSongBPMModel {
     'Accept': 'application/json',
   };
 
+  // Required for testing
+  http.Client _client;
+
+  GetSongBPMModel(this._client);
+
   // getSongs : Returns a list of songs with a given BPM.
-  static Future<List<TempoSong>> getSongs(int bpm) async {
+  Future<List<TempoSong>> getSongs(int bpm) async {
     log("Getting songs of BPM $bpm");
     final queryParams = {
       "api_key": Config.getSongBpmApiKey,
       "bpm": bpm.toString(),
     };
     final uri = Uri.https(_baseAPI, _tempoPath, queryParams);
-    final response = await http
+    final response = await _client
         .get(uri, headers: _headers)
         .timeout(Duration(seconds: _httpTimeout), onTimeout: () {
       throw TimeoutException("GetSongBPM timed out!");
